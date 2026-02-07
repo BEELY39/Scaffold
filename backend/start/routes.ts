@@ -11,6 +11,7 @@ import router from '@adonisjs/core/services/router'
 const ProjectController = () => import('#controllers/projects_controller')
 const UsersController = () => import('#controllers/users_controller')
 const TicketsController = () => import('#controllers/tickets_controller')
+const AuthController = () => import('#controllers/auth_controller')
 
 router.get('/', async () => {
   return {
@@ -18,7 +19,15 @@ router.get('/', async () => {
   }
 })
 
+// Auth routes (Google OAuth)
+router.get('/auth/google', [AuthController, 'redirect'])
+router.get('/auth/google/callback', [AuthController, 'callback'])
+
 router.group(() => {
+  // Auth
+  router.get('/auth/me', [AuthController, 'me'])
+  router.post('/auth/logout', [AuthController, 'logout'])
+
   // Users
   router.get('/users', [UsersController, 'index'])
   router.get('/users/:id', [UsersController, 'show'])

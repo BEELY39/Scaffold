@@ -6,7 +6,10 @@
       "Bash(docker rm:*)",
       "Bash(docker exec:*)",
       "Bash(node ace make:migration:*)",
-      "Bash(node ace migration:run:*)"
+      "Bash(node ace migration:run:*)",
+      "Bash(npm install:*)",
+      "Bash(node ace configure:*)",
+      "Bash(node ace migration:status:*)"
     ]
   }
 }
