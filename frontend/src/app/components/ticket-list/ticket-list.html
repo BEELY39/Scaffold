@@ -1,0 +1,26 @@
+<div class="w-full">
+  <!-- Loading State -->
+   @if (loading()) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-pulse">
+      @for (item of [1,2,3,4]; track item) {
+        <div class="h-48 rounded-xl bg-white/5 border border-white/10"></div>
+      }
+    </div>
+   } @else {
+    <!-- Empty State -->
+    @if (tickets().length === 0) {
+      <div class="flex flex-col items-center justify-center p-12 text-center rounded-xl border border-dashed border-white/10 bg-white/5">
+        <div class="text-4xl mb-4">🎫</div>
+        <h3 class="text-xl font-medium text-white mb-2">No tickets found</h3>
+        <p class="text-slate-400">Create a new ticket to get started.</p>
+      </div>
+    } @else {
+      <!-- Ticket Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        @for (ticket of tickets(); track ticket.id) {
+          <app-ticket-card [ticket]="ticket"></app-ticket-card>
+        }
+      </div>
+    }
+   }
+</div>

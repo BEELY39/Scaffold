@@ -1,2 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: #0f172a; /* slate-900 */
+  color: #f8fafc; /* slate-50 */
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
 @import "tailwindcss";

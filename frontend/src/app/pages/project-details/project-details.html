@@ -1,0 +1,160 @@
+<div class="min-h-screen bg-gray-900 p-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-white mb-2">Project Details</h1>
+        <p class="text-slate-400">Manage your tickets and project status</p>
+      </div>
+      <div class="flex gap-3">
+        <button
+          (click)="generateTickets()"
+          [disabled]="isGenerating()"
+          class="px-4 py-2 bg-purple-600 hover:bg-purple-500 disabled:bg-purple-800 disabled:cursor-not-allowed text-white rounded-lg flex items-center gap-2 transition-colors"
+        >
+          @if (isGenerating()) {
+            <span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            Generating...
+          } @else {
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Generate with AI
+          }
+        </button>
+        <button
+          (click)="openModal()"
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg flex items-center gap-2 transition-colors"
+        >
+          <span class="text-xl">+</span> New Ticket
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Cards + Chart -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <!-- Progress Chart -->
+      <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+        <h3 class="text-lg font-semibold text-white mb-4">Progress</h3>
+        <div class="flex items-center justify-center">
+          <!-- Circular Progress -->
+          <div class="relative w-32 h-32">
+            <svg class="w-32 h-32 transform -rotate-90">
+              <circle
+                cx="64"
+                cy="64"
+                r="56"
+                stroke="#374151"
+                stroke-width="12"
+                fill="none"
+              />
+              <circle
+                cx="64"
+                cy="64"
+                r="56"
+                stroke="#22c55e"
+                stroke-width="12"
+                fill="none"
+                [attr.stroke-dasharray]="351.86"
+                [attr.stroke-dashoffset]="351.86 - (351.86 * stats().progress / 100)"
+                class="transition-all duration-500"
+              />
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-2xl font-bold text-white">{{ stats().progress }}%</span>
+            </div>
+          </div>
+        </div>
+        <p class="text-center text-gray-400 mt-4">{{ stats().done }}/{{ stats().total }} tickets done</p>
+      </div>
+
+      <!-- Status Breakdown -->
+      <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+        <h3 class="text-lg font-semibold text-white mb-4">Status Breakdown</h3>
+        <!-- Stacked Bar -->
+        <div class="h-6 rounded-full overflow-hidden flex bg-gray-700 mb-4">
+          @if (chartData().todoPercent > 0) {
+            <div
+              class="bg-gray-500 transition-all duration-500"
+              [style.width.%]="chartData().todoPercent"
+            ></div>
+          }
+          @if (chartData().inProgressPercent > 0) {
+            <div
+              class="bg-blue-500 transition-all duration-500"
+              [style.width.%]="chartData().inProgressPercent"
+            ></div>
+          }
+          @if (chartData().codeReviewPercent > 0) {
+            <div
+              class="bg-yellow-500 transition-all duration-500"
+              [style.width.%]="chartData().codeReviewPercent"
+            ></div>
+          }
+          @if (chartData().donePercent > 0) {
+            <div
+              class="bg-green-500 transition-all duration-500"
+              [style.width.%]="chartData().donePercent"
+            ></div>
+          }
+        </div>
+        <!-- Legend -->
+        <div class="grid grid-cols-2 gap-2 text-sm">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-gray-500"></span>
+            <span class="text-gray-400">Todo ({{ stats().todo }})</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+            <span class="text-gray-400">In Progress ({{ stats().inProgress }})</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+            <span class="text-gray-400">Review ({{ stats().codeReview }})</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-green-500"></span>
+            <span class="text-gray-400">Done ({{ stats().done }})</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Time Stats -->
+      <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+        <h3 class="text-lg font-semibold text-white mb-4">Time Estimation</h3>
+        <div class="space-y-4">
+          <div>
+            <p class="text-gray-400 text-sm">Total Estimated</p>
+            <p class="text-2xl font-bold text-white">{{ stats().totalHours }}h</p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-sm">Completed</p>
+            <p class="text-2xl font-bold text-green-400">{{ stats().doneHours }}h</p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-sm">Remaining</p>
+            <p class="text-2xl font-bold text-orange-400">{{ stats().totalHours - stats().doneHours }}h</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="flex justify-center py-12">
+        <div class="inline-block w-8 h-8 border-4 border-gray-600 border-t-blue-500 rounded-full animate-spin"></div>
+      </div>
+    } @else {
+      <!-- Ticket List -->
+      <app-ticket-list [tickets]="tickets()"></app-ticket-list>
+    }
+
+    <!-- Modal -->
+    @if (isModalOpen()) {
+      <app-create-ticket-modal
+        (onClose)="closeModal()"
+        (onSubmit)="createTicket($event)"
+      ></app-create-ticket-modal>
+    }
+  </div>
+</div>

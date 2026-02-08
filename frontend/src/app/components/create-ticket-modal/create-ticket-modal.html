@@ -1,0 +1,93 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <!-- Backdrop -->
+  <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" (click)="close()"></div>
+
+  <!-- Modal Content -->
+  <div class="relative w-full max-w-2xl bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden glass-panel">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between p-6 border-b border-white/10 bg-white/5">
+      <h2 class="text-xl font-semibold text-white">Create New Ticket</h2>
+      <button (click)="close()" class="text-slate-400 hover:text-white transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <form [formGroup]="ticketForm" (ngSubmit)="submit()" class="p-6 space-y-6">
+      
+      <!-- Title -->
+      <div class="space-y-2">
+        <label for="title" class="text-sm font-medium text-slate-300">Title</label>
+        <input type="text" id="title" formControlName="title" 
+          class="w-full px-4 py-2 bg-slate-800/50 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-slate-500 transition-all"
+          placeholder="e.g., Implement login flow">
+        @if (ticketForm.controls.title.touched && ticketForm.controls.title.errors?.['required']) {
+          <p class="text-red-400 text-xs">Title is required</p>
+        }
+      </div>
+
+      <!-- Description -->
+      <div class="space-y-2">
+        <label for="description" class="text-sm font-medium text-slate-300">Description</label>
+        <textarea id="description" formControlName="description" rows="4"
+          class="w-full px-4 py-2 bg-slate-800/50 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-slate-500 transition-all resize-none"
+          placeholder="Describe the task..."></textarea>
+      </div>
+
+      <!-- Row: Type & Priority -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <label for="type" class="text-sm font-medium text-slate-300">Type</label>
+          <select id="type" formControlName="type"
+            class="w-full px-4 py-2 bg-slate-800/50 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white appearance-none cursor-pointer">
+            <option value="feature">✨ Feature</option>
+            <option value="bug">🐛 Bug</option>
+            <option value="chore">🧹 Chore</option>
+            <option value="spike">⚡ Spike</option>
+          </select>
+        </div>
+        
+        <div class="space-y-2">
+          <label for="priority" class="text-sm font-medium text-slate-300">Priority</label>
+          <select id="priority" formControlName="priority"
+            class="w-full px-4 py-2 bg-slate-800/50 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white appearance-none cursor-pointer">
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Row: Complexity & Hours -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <label for="complexity" class="text-sm font-medium text-slate-300">Complexity (Story Points)</label>
+          <input type="number" id="complexity" formControlName="complexity" min="1" max="13"
+            class="w-full px-4 py-2 bg-slate-800/50 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white">
+        </div>
+
+        <div class="space-y-2">
+          <label for="hours" class="text-sm font-medium text-slate-300">Estimated Hours</label>
+          <input type="number" id="hours" formControlName="estimatedHours" min="0" step="0.5"
+            class="w-full px-4 py-2 bg-slate-800/50 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white">
+        </div>
+      </div>
+
+    </form>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-end gap-3 p-6 border-t border-white/10 bg-white/5">
+      <button type="button" (click)="close()" 
+        class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors">
+        Cancel
+      </button>
+      <button type="button" (click)="submit()" [disabled]="ticketForm.invalid"
+        class="px-6 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg shadow-lg shadow-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        Create Ticket
+      </button>
+    </div>
+
+  </div>
+</div>
