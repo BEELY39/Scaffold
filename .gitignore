@@ -25,5 +25,7 @@ yarn-error.log
 .DS_Store
 # Docker
 compose.yml
-
+#logs
+*.har
+*.log
 
