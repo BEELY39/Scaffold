@@ -16,6 +16,7 @@ export interface User {
 })
 export class AuthService {
   private readonly TOKEN_KEY = 'auth_token';
+  private readonly RETURN_URL_KEY = 'return_url';
   private readonly platformId = inject(PLATFORM_ID);
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
@@ -33,11 +34,17 @@ export class AuthService {
     return isPlatformBrowser(this.platformId);
   }
 
+  private readonly isBrowserCheck = () => isPlatformBrowser(this.platformId);
+
+
   /**
    * Redirige vers Google OAuth
    */
-  googleLogin(): void {
+  googleLogin(returnUrl?: string): void {
     if (this.isBrowser()) {
+      if (returnUrl) {
+        localStorage.setItem(this.RETURN_URL_KEY, returnUrl);
+      }
       window.location.href = `${environment.apiUrl}/auth/google`;
     }
   }
@@ -45,16 +52,29 @@ export class AuthService {
   /**
    * Gère le callback après authentification Google
    */
-  handleCallback(token: string): void {
+  handleCallback(token: string, returnUrl: string = '/'): void {
     this.saveToken(token);
-    this.loadUser();
-    this.router.navigate(['/']);
+    // Charger le user puis rediriger
+    this.http.get<User>(`${environment.apiUrl}/api/auth/me`).subscribe({
+      next: (user) => {
+        this.user.set(user);
+        this.router.navigate([returnUrl]);
+      },
+      error: () => {
+        this.clearToken();
+        this.user.set(null);
+        this.router.navigate(['/login']);
+      },
+    });
   }
 
   /**
    * Charge les infos utilisateur depuis l'API
    */
   loadUser(): void {
+    if (!this.isBrowser() || !this.getToken()) {
+      return;
+    }
     this.http.get<User>(`${environment.apiUrl}/api/auth/me`).subscribe({
       next: (user) => this.user.set(user),
       error: () => {
@@ -113,5 +133,15 @@ export class AuthService {
    */
   isAuthenticated(): boolean {
     return !!this.getToken();
+  }
+
+  /**
+   * Récupère et nettoie l'URL de retour stockée
+   */
+  getAndClearReturnUrl(): string | null {
+    if (!this.isBrowser()) return null;
+    const url = localStorage.getItem(this.RETURN_URL_KEY);
+    localStorage.removeItem(this.RETURN_URL_KEY);
+    return url;
   }
 }

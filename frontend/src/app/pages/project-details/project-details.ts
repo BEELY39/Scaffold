@@ -1,26 +1,50 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
-import { TicketList } from '../../components/ticket-list/ticket-list';
+import { ActivatedRoute, Router } from '@angular/router';
+import { KanbanBoard, StatusChangeEvent, TicketStatus } from '../../components/kanban-board/kanban-board';
 import { CreateTicketModal } from '../../components/create-ticket-modal/create-ticket-modal';
+import { Sidebar, Project as SidebarProject } from '../../components/sidebar/sidebar';
+import { AiGenerator, AiGeneratorInput } from '../../components/ai-generator/ai-generator';
 import { Ticket, CreateTicketDto } from '../../models/ticket.model';
 import { TicketService } from '../../services/ticket.service';
+import { ProjectService } from '../../services/project.service';
+import { AuthService } from '../../services/auth';
+
+interface Activity {
+  id: number;
+  userName: string;
+  userInitials: string;
+  action: string;
+  target: string;
+  time: string;
+}
 
 @Component({
   selector: 'app-project-details',
-  imports: [CommonModule, TicketList, CreateTicketModal],
+  imports: [CommonModule, KanbanBoard, CreateTicketModal, Sidebar, AiGenerator],
   templateUrl: './project-details.html',
   styles: ``,
 })
 export class ProjectDetails implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private ticketService = inject(TicketService);
+  private projectService = inject(ProjectService);
+  private authService = inject(AuthService);
 
   projectId = signal<number>(0);
+  projectName = signal<string>('My Project');
   isModalOpen = signal(false);
   isLoading = signal(true);
   isGenerating = signal(false);
   tickets = signal<Ticket[]>([]);
+  defaultStatus = signal<TicketStatus>('todo');
+
+  // Sidebar projects from API
+  sidebarProjects = signal<SidebarProject[]>([]);
+
+  // Recent activity - tu peux connecter ça à un ActivityService plus tard
+  recentActivity = signal<Activity[]>([]);
 
   // Stats calculées
   stats = computed(() => {
@@ -57,8 +81,26 @@ export class ProjectDetails implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.projectId.set(+id);
+      this.loadProject();
+      this.loadProjects();
       this.loadTickets();
     }
+  }
+
+  loadProject(): void {
+    this.projectService.getById(this.projectId()).subscribe({
+      next: (project) => {
+        this.projectName.set(project.name);
+      },
+    });
+  }
+
+  loadProjects(): void {
+    this.projectService.getAll().subscribe({
+      next: (projects) => {
+        this.sidebarProjects.set(projects.map(p => ({ id: p.id, name: p.name })));
+      },
+    });
   }
 
   loadTickets(): void {
@@ -74,8 +116,14 @@ export class ProjectDetails implements OnInit {
     });
   }
 
-  generateTickets(): void {
+  // AI Generation - à implémenter avec ton backend
+  handleAiGenerate(input: AiGeneratorInput): void {
     this.isGenerating.set(true);
+    // TODO: Appelle ton service backend avec les inputs
+    // this.ticketService.generateWithAi(this.projectId(), input).subscribe(...)
+    console.log('AI Generation input:', input);
+
+    // Pour l'instant, on simule avec generateTickets
     this.ticketService.generateTickets(this.projectId()).subscribe({
       next: (newTickets) => {
         this.tickets.update((current) => [...current, ...newTickets]);
@@ -88,11 +136,22 @@ export class ProjectDetails implements OnInit {
   }
 
   openModal(): void {
+    this.defaultStatus.set('todo');
+    this.isModalOpen.set(true);
+  }
+
+  openModalWithStatus(status: TicketStatus): void {
+    this.defaultStatus.set(status);
     this.isModalOpen.set(true);
   }
 
   closeModal(): void {
     this.isModalOpen.set(false);
+  }
+
+  openTicketDetails(ticket: Ticket): void {
+    // TODO: Ouvrir un modal de détails ou naviguer vers une page de détails
+    console.log('Open ticket details:', ticket);
   }
 
   createTicket(ticketData: CreateTicketDto): void {
@@ -109,8 +168,8 @@ export class ProjectDetails implements OnInit {
     });
   }
 
-  updateTicketStatus(event: { ticketId: number; status: Ticket['status'] }): void {
-    this.ticketService.update(event.ticketId, { status: event.status }).subscribe({
+  updateTicketStatus(event: StatusChangeEvent): void {
+    this.ticketService.update(event.ticketId, { status: event.newStatus }).subscribe({
       next: (updatedTicket) => {
         this.tickets.update((current) =>
           current.map((t) => (t.id === updatedTicket.id ? updatedTicket : t))
@@ -125,5 +184,10 @@ export class ProjectDetails implements OnInit {
         this.tickets.update((current) => current.filter((t) => t.id !== ticketId));
       },
     });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

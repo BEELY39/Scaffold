@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth';
 
 @Component({
@@ -55,8 +56,10 @@ import { AuthService } from '../../services/auth';
 })
 export class LoginComponent {
   private authService = inject(AuthService);
+  private route = inject(ActivatedRoute);
 
   login(): void {
-    this.authService.googleLogin();
+    const returnUrl = this.route.snapshot.queryParams['returnUrl'];
+    this.authService.googleLogin(returnUrl);
   }
 }

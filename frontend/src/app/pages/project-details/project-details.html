@@ -1,160 +1,174 @@
-<div class="min-h-screen bg-gray-900 p-8">
-  <div class="max-w-7xl mx-auto">
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-8">
-      <div>
-        <h1 class="text-3xl font-bold text-white mb-2">Project Details</h1>
-        <p class="text-slate-400">Manage your tickets and project status</p>
-      </div>
-      <div class="flex gap-3">
-        <button
-          (click)="generateTickets()"
-          [disabled]="isGenerating()"
-          class="px-4 py-2 bg-purple-600 hover:bg-purple-500 disabled:bg-purple-800 disabled:cursor-not-allowed text-white rounded-lg flex items-center gap-2 transition-colors"
-        >
-          @if (isGenerating()) {
-            <span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-            Generating...
-          } @else {
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-            </svg>
-            Generate with AI
-          }
-        </button>
-        <button
-          (click)="openModal()"
-          class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg flex items-center gap-2 transition-colors"
-        >
-          <span class="text-xl">+</span> New Ticket
-        </button>
-      </div>
-    </div>
+<div class="flex h-screen bg-gray-100">
+  <!-- Sidebar -->
+  <app-sidebar
+    [projects]="sidebarProjects()"
+    (onLogout)="logout()"
+  />
 
-    <!-- Stats Cards + Chart -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-      <!-- Progress Chart -->
-      <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
-        <h3 class="text-lg font-semibold text-white mb-4">Progress</h3>
-        <div class="flex items-center justify-center">
-          <!-- Circular Progress -->
-          <div class="relative w-32 h-32">
-            <svg class="w-32 h-32 transform -rotate-90">
-              <circle
-                cx="64"
-                cy="64"
-                r="56"
-                stroke="#374151"
-                stroke-width="12"
-                fill="none"
-              />
-              <circle
-                cx="64"
-                cy="64"
-                r="56"
-                stroke="#22c55e"
-                stroke-width="12"
-                fill="none"
-                [attr.stroke-dasharray]="351.86"
-                [attr.stroke-dashoffset]="351.86 - (351.86 * stats().progress / 100)"
-                class="transition-all duration-500"
-              />
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- Top Header -->
+    <header class="bg-white border-b border-gray-200 px-6 py-4">
+      <div class="flex items-center justify-between">
+        <!-- Search Bar -->
+        <div class="flex-1 max-w-xl">
+          <div class="relative">
+            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
-            <div class="absolute inset-0 flex items-center justify-center">
-              <span class="text-2xl font-bold text-white">{{ stats().progress }}%</span>
+            <input
+              type="text"
+              placeholder="Search for anything..."
+              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+            />
+          </div>
+        </div>
+
+        <!-- Right Actions -->
+        <div class="flex items-center gap-4">
+          <button
+            (click)="openModal()"
+            class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg flex items-center gap-2 transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Create New Ticket
+          </button>
+
+          <!-- Notifications -->
+          <button class="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Board Header -->
+    <div class="bg-white border-b border-gray-200 px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-500 uppercase">Project</span>
+            <h1 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+              <span class="text-2xl">🔥</span>
+              {{ projectName() }}
+            </h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <!-- Visibility -->
+          <div class="flex items-center gap-2 text-sm text-gray-500">
+            <span class="uppercase text-xs">Visibility</span>
+            <span class="flex items-center gap-1 text-gray-700">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+              Private Board
+            </span>
+          </div>
+
+          <!-- Team -->
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-500 uppercase">Team</span>
+            <div class="flex -space-x-2">
+              <div class="w-8 h-8 rounded-full bg-indigo-500 border-2 border-white flex items-center justify-center text-white text-xs font-bold">JD</div>
+              <div class="w-8 h-8 rounded-full bg-green-500 border-2 border-white flex items-center justify-center text-white text-xs font-bold">MK</div>
+              <div class="w-8 h-8 rounded-full bg-orange-500 border-2 border-white flex items-center justify-center text-white text-xs font-bold">AS</div>
+              <div class="w-8 h-8 rounded-full bg-gray-300 border-2 border-white flex items-center justify-center text-gray-600 text-xs font-bold">+4</div>
             </div>
           </div>
         </div>
-        <p class="text-center text-gray-400 mt-4">{{ stats().done }}/{{ stats().total }} tickets done</p>
+      </div>
+    </div>
+
+    <!-- Main Area -->
+    <div class="flex-1 overflow-hidden flex">
+      <!-- Kanban Board -->
+      <div class="flex-1 p-6 overflow-x-auto">
+        @if (isLoading()) {
+          <div class="flex justify-center py-12">
+            <div class="inline-block w-8 h-8 border-4 border-gray-300 border-t-indigo-500 rounded-full animate-spin"></div>
+          </div>
+        } @else {
+          <app-kanban-board
+            [tickets]="tickets()"
+            (addTicket)="openModalWithStatus($event)"
+            (ticketClick)="openTicketDetails($event)"
+            (statusChange)="updateTicketStatus($event)"
+          />
+        }
       </div>
 
-      <!-- Status Breakdown -->
-      <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
-        <h3 class="text-lg font-semibold text-white mb-4">Status Breakdown</h3>
-        <!-- Stacked Bar -->
-        <div class="h-6 rounded-full overflow-hidden flex bg-gray-700 mb-4">
-          @if (chartData().todoPercent > 0) {
-            <div
-              class="bg-gray-500 transition-all duration-500"
-              [style.width.%]="chartData().todoPercent"
-            ></div>
-          }
-          @if (chartData().inProgressPercent > 0) {
-            <div
-              class="bg-blue-500 transition-all duration-500"
-              [style.width.%]="chartData().inProgressPercent"
-            ></div>
-          }
-          @if (chartData().codeReviewPercent > 0) {
-            <div
-              class="bg-yellow-500 transition-all duration-500"
-              [style.width.%]="chartData().codeReviewPercent"
-            ></div>
-          }
-          @if (chartData().donePercent > 0) {
-            <div
-              class="bg-green-500 transition-all duration-500"
-              [style.width.%]="chartData().donePercent"
-            ></div>
-          }
-        </div>
-        <!-- Legend -->
-        <div class="grid grid-cols-2 gap-2 text-sm">
-          <div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-gray-500"></span>
-            <span class="text-gray-400">Todo ({{ stats().todo }})</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-blue-500"></span>
-            <span class="text-gray-400">In Progress ({{ stats().inProgress }})</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
-            <span class="text-gray-400">Review ({{ stats().codeReview }})</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-green-500"></span>
-            <span class="text-gray-400">Done ({{ stats().done }})</span>
-          </div>
-        </div>
-      </div>
+      <!-- Right Panel - AI Generator & Activity -->
+      <div class="w-80 min-w-80 bg-white border-l border-gray-200 p-4 overflow-y-auto">
+        <!-- AI Generator -->
+        <app-ai-generator
+          [isGenerating]="isGenerating()"
+          (onGenerate)="handleAiGenerate($event)"
+        />
 
-      <!-- Time Stats -->
-      <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
-        <h3 class="text-lg font-semibold text-white mb-4">Time Estimation</h3>
-        <div class="space-y-4">
-          <div>
-            <p class="text-gray-400 text-sm">Total Estimated</p>
-            <p class="text-2xl font-bold text-white">{{ stats().totalHours }}h</p>
+        <!-- Recent Activity -->
+        <div class="mt-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
+          <div class="space-y-4">
+            @for (activity of recentActivity(); track activity.id) {
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                  <span class="text-indigo-600 text-xs font-bold">{{ activity.userInitials }}</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm text-gray-800">
+                    <span class="font-medium">{{ activity.userName }}</span>
+                    {{ activity.action }}
+                    <span class="text-indigo-600">{{ activity.target }}</span>
+                  </p>
+                  <p class="text-xs text-gray-400 mt-1">{{ activity.time }}</p>
+                </div>
+              </div>
+            }
+
+            @if (recentActivity().length === 0) {
+              <p class="text-sm text-gray-400 text-center py-4">No recent activity</p>
+            }
           </div>
-          <div>
-            <p class="text-gray-400 text-sm">Completed</p>
-            <p class="text-2xl font-bold text-green-400">{{ stats().doneHours }}h</p>
-          </div>
-          <div>
-            <p class="text-gray-400 text-sm">Remaining</p>
-            <p class="text-2xl font-bold text-orange-400">{{ stats().totalHours - stats().doneHours }}h</p>
+        </div>
+
+        <!-- Stats Quick View -->
+        <div class="mt-6 p-4 bg-gray-50 rounded-xl">
+          <h4 class="text-sm font-semibold text-gray-800 mb-3">Quick Stats</h4>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="text-center">
+              <p class="text-2xl font-bold text-gray-800">{{ stats().total }}</p>
+              <p class="text-xs text-gray-500">Total Tickets</p>
+            </div>
+            <div class="text-center">
+              <p class="text-2xl font-bold text-green-600">{{ stats().progress }}%</p>
+              <p class="text-xs text-gray-500">Completed</p>
+            </div>
+            <div class="text-center">
+              <p class="text-2xl font-bold text-blue-600">{{ stats().inProgress }}</p>
+              <p class="text-xs text-gray-500">In Progress</p>
+            </div>
+            <div class="text-center">
+              <p class="text-2xl font-bold text-orange-600">{{ stats().totalHours }}h</p>
+              <p class="text-xs text-gray-500">Estimated</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Loading State -->
-    @if (isLoading()) {
-      <div class="flex justify-center py-12">
-        <div class="inline-block w-8 h-8 border-4 border-gray-600 border-t-blue-500 rounded-full animate-spin"></div>
-      </div>
-    } @else {
-      <!-- Ticket List -->
-      <app-ticket-list [tickets]="tickets()"></app-ticket-list>
-    }
-
-    <!-- Modal -->
-    @if (isModalOpen()) {
-      <app-create-ticket-modal
-        (onClose)="closeModal()"
-        (onSubmit)="createTicket($event)"
-      ></app-create-ticket-modal>
-    }
   </div>
 </div>
+
+<!-- Modal -->
+@if (isModalOpen()) {
+  <app-create-ticket-modal
+    (onClose)="closeModal()"
+    (onSubmit)="createTicket($event)"
+  />
+}

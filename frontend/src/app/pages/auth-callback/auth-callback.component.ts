@@ -1,4 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 
@@ -19,15 +20,20 @@ export class AuthCallbackComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private authService = inject(AuthService);
+  private platformId = inject(PLATFORM_ID);
 
   ngOnInit(): void {
-    const token = this.route.snapshot.queryParamMap.get('token');
+    if (isPlatformBrowser(this.platformId)) {
+      const token = this.route.snapshot.queryParamMap.get('token');
+      // Retrieve returnUrl from AuthService (localStorage) or query params
+      const returnUrl = this.authService.getAndClearReturnUrl() || this.route.snapshot.queryParamMap.get('returnUrl') || '/';
 
-    if (token) {
-      this.authService.handleCallback(token);
-    } else {
-      // Pas de token, redirige vers login
-      this.router.navigate(['/login']);
+      if (token) {
+        this.authService.handleCallback(token, returnUrl);
+      } else {
+        // Pas de token, redirige vers login
+        this.router.navigate(['/login']);
+      }
     }
   }
 }

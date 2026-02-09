@@ -23,14 +23,28 @@ export default class Ticket extends BaseModel {
   // Spécifications Techniques - Le "Comment"
   @column({
     prepare: (value: string[] | null) => (value ? JSON.stringify(value) : null),
-    consume: (value: string | null) => (value ? JSON.parse(value) : null),
+    consume: (value: string | null) => {
+      if (!value) return null
+      try {
+        return JSON.parse(value)
+      } catch {
+        return null
+      }
+    },
   })
   declare technicalSpecs: string[] | null
 
   // Critères d'Acceptation (Definition of Done)
   @column({
     prepare: (value: string[] | null) => (value ? JSON.stringify(value) : null),
-    consume: (value: string | null) => (value ? JSON.parse(value) : null),
+    consume: (value: string | null) => {
+      if (!value) return null
+      try {
+        return JSON.parse(value)
+      } catch {
+        return null
+      }
+    },
   })
   declare acceptanceCriteria: string[] | null
 
@@ -57,7 +71,14 @@ export default class Ticket extends BaseModel {
   @column({
     prepare: (value: { type: string; url: string; label: string }[] | null) =>
       value ? JSON.stringify(value) : null,
-    consume: (value: string | null) => (value ? JSON.parse(value) : null),
+    consume: (value: string | null) => {
+      if (!value) return null
+      try {
+        return JSON.parse(value)
+      } catch {
+        return null
+      }
+    },
   })
   declare resources: { type: string; url: string; label: string }[] | null
 
