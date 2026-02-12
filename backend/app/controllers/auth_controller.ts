@@ -1,4 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
+import hash from '@adonisjs/core/services/hash'
 import User from '#models/user'
 
 export default class AuthController {
@@ -87,5 +88,101 @@ export default class AuthController {
     const user = await auth.authenticate()
     await User.accessTokens.delete(user, user.currentAccessToken.identifier)
     return response.json({ message: 'Logged out successfully' })
+  }
+
+  /**
+   * Inscription par email/password
+   */
+  async register({ request, response }: HttpContext) {
+    const { fullName, email, password, passwordConfirmation } = request.only([
+      'fullName',
+      'email',
+      'password',
+      'passwordConfirmation',
+    ])
+
+    // Validation
+    if (!fullName || !email || !password) {
+      return response.status(422).json({
+        message: 'Tous les champs sont requis',
+      })
+    }
+
+    if (password !== passwordConfirmation) {
+      return response.status(422).json({
+        message: 'Les mots de passe ne correspondent pas',
+      })
+    }
+
+    if (password.length < 8) {
+      return response.status(422).json({
+        message: 'Le mot de passe doit contenir au moins 8 caractères',
+      })
+    }
+
+    // Vérifier si email existe déjà
+    const existingUser = await User.findBy('email', email)
+    if (existingUser) {
+      return response.status(422).json({
+        message: 'Cet email est déjà utilisé',
+      })
+    }
+
+    // Créer l'utilisateur
+    const user = await User.create({
+      fullName,
+      email,
+      password: await hash.make(password),
+      planType: 'free',
+      aiGenerationsThisMonth: 0,
+      aiGenerationsLimit: 2,
+    })
+
+    // Générer token
+    const token = await User.accessTokens.create(user)
+
+    return response.status(201).json({
+      token: token.value!.release(),
+      user: {
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+      },
+    })
+  }
+
+  /**
+   * Connexion par email/password
+   */
+  async login({ request, response }: HttpContext) {
+    const { email, password } = request.only(['email', 'password'])
+
+    // Trouver l'utilisateur
+    const user = await User.findBy('email', email)
+    if (!user || !user.password) {
+      return response.status(401).json({
+        message: 'Email ou mot de passe incorrect',
+      })
+    }
+
+    // Vérifier le mot de passe
+    const isValid = await hash.verify(user.password, password)
+    if (!isValid) {
+      return response.status(401).json({
+        message: 'Email ou mot de passe incorrect',
+      })
+    }
+
+    // Générer token
+    const token = await User.accessTokens.create(user)
+
+    return response.status(200).json({
+      token: token.value!.release(),
+      user: {
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+      },
+    })
   }
 }

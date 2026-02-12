@@ -17,8 +17,18 @@ export default class Project extends BaseModel {
   @column()
   declare description: string | null
 
-  @column()
-  declare tech_stack: object
+  @column({
+    prepare: (value: string[] | null) => (value ? JSON.stringify(value) : null),
+    consume: (value: string | null) => {
+      if (!value) return []
+      try {
+        return JSON.parse(value)
+      } catch {
+        return []
+      }
+    },
+  })
+  declare tech_stack: string[]
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

@@ -24,6 +24,10 @@ router.get('/', async () => {
 router.get('/auth/google', [AuthController, 'redirect'])
 router.get('/auth/google/callback', [AuthController, 'callback'])
 
+// Auth routes (Email/Password)
+router.post('/auth/register', [AuthController, 'register'])
+router.post('/auth/login', [AuthController, 'login'])
+
 router.group(() => {
   // Auth
   router.get('/auth/me', [AuthController, 'me'])
@@ -36,10 +40,14 @@ router.group(() => {
   router.put('/users/:id', [UsersController, 'update'])
   router.delete('/users/:id', [UsersController, 'destroy'])
 
+  // Usage (plan limits)
+  router.get('/usage', [ProjectController, 'getUsage'])
+
   // Projects
   router.get('/projects', [ProjectController, 'index'])
   router.get('/projects/:id', [ProjectController, 'show'])
   router.post('/projects', [ProjectController, 'store'])
+  router.post('/projects/with-tickets', [ProjectController, 'storeWithTickets'])
   router.put('/projects/:id', [ProjectController, 'update'])
   router.delete('/projects/:id', [ProjectController, 'destroy'])
   router.post('/projects/:id/generate-tickets', [ProjectController, 'generateTickets'])

@@ -17,7 +17,7 @@ interface GeneratedTicket {
 interface GenerateTicketsParams {
   projectName: string
   projectDescription: string
-  techStack: Record<string, string>
+  techStack: string[] | Record<string, string>
 }
 
 export default class AiService {
@@ -32,9 +32,12 @@ export default class AiService {
   async generateTickets(params: GenerateTicketsParams): Promise<GeneratedTicket[]> {
     const { projectName, projectDescription, techStack } = params
 
-    const techStackString = Object.entries(techStack)
-      .map(([key, value]) => `${key}: ${value}`)
-      .join(', ')
+    // Supporte les deux formats: tableau ou objet
+    const techStackString = Array.isArray(techStack)
+      ? techStack.join(', ')
+      : Object.entries(techStack)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join(', ')
 
     const prompt = `Tu es un chef de projet agile senior dans une agence de développement. Tu dois générer des tickets professionnels et détaillés pour le projet suivant.
 

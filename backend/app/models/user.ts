@@ -23,6 +23,18 @@ export default class User extends BaseModel {
   @column()
   declare avatar: string | null
 
+  @column()
+  declare planType: string
+
+  @column()
+  declare aiGenerationsThisMonth: number
+
+  @column()
+  declare aiGenerationsLimit: number
+
+  @column.dateTime()
+  declare billingPeriodStart: DateTime
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
