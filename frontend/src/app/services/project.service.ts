@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { Project, CreateProjectDto } from '../models/project.model';
+import { Ticket } from '../models/ticket.model';
 
 @Injectable({
   providedIn: 'root',
@@ -29,5 +30,12 @@ export class ProjectService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  /**
+   * Crée un projet ET génère les tickets via IA en une seule requête
+   */
+  createWithTickets(project: CreateProjectDto): Observable<{ project: Project; tickets: Ticket[] }> {
+    return this.http.post<{ project: Project; tickets: Ticket[] }>(`${this.apiUrl}/with-tickets`, project);
   }
 }

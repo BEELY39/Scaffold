@@ -29,6 +29,12 @@ export class TicketCard {
   }
 
   getStatusLabel(status: string): string {
-    return status.replace('_', ' ').toUpperCase();
+    switch (status) {
+      case 'todo': return 'À FAIRE';
+      case 'in_progress': return 'EN COURS';
+      case 'code_review': return 'REVUE';
+      case 'done': return 'TERMINÉ';
+      default: return status.toUpperCase();
+    }
   }
 }

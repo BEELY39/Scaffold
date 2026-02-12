@@ -1,6 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { inject, PLATFORM_ID } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { environment } from '../../environments/environment.development';
 import { AuthService } from '../services/auth';
 
 /**
@@ -14,21 +15,20 @@ export const authGuard: CanActivateFn = (_route, state) => {
 
   // Côté serveur (SSR), on laisse passer pour le rendu initial
   if (!isPlatformBrowser(platformId)) {
-    console.log('[authGuard] SSR mode - passing through');
     return true;
   }
 
-  const token = authService.getToken();
-  console.log('[authGuard] Token:', token ? 'EXISTS' : 'NONE');
+  // Mode dev: bypass l'authentification
+  if (environment.bypassAuth) {
+    return true;
+  }
 
   // Utilisateur connecté → accès autorisé
   if (authService.isAuthenticated()) {
-    console.log('[authGuard] Authenticated - allowing access');
     return true;
   }
 
   // Non connecté → redirection vers login avec returnUrl
-  console.log('[authGuard] Not authenticated - redirecting to login');
   return router.createUrlTree(['/login'], {
     queryParams: { returnUrl: state.url },
   });
@@ -54,5 +54,5 @@ export const guestGuard: CanActivateFn = () => {
   }
 
   // Déjà connecté → redirection vers dashboard
-  return router.createUrlTree(['/']);
+  return router.createUrlTree(['/dashboard']);
 };

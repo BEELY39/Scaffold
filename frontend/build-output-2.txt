@@ -1,0 +1,49 @@
+
+> frontend@0.0.0 build
+> ng build
+
+[33m❯[39m Building...
+[32m✔[39m Building...
+[35mBrowser bundles[39m     
+[1mInitial chunk files[22m [2m | [22m[1mNames[22m                  [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-HDCKLHND.js[39m   [2m | [22m[2m-[22m                      [2m | [22m[36m284.33 kB[39m[2m | [22m               [36m78.39 kB[39m
+[32mstyles-WE46VCMO.css[39m [2m | [22m[2mstyles[22m                 [2m | [22m [36m50.39 kB[39m[2m | [22m                [36m7.21 kB[39m
+[32mchunk-IDATKXDO.js[39m   [2m | [22m[2m-[22m                      [2m | [22m  [36m1.76 kB[39m[2m | [22m              [36m624 bytes[39m
+[32mmain-NG54SMOW.js[39m    [2m | [22m[2mmain[22m                   [2m | [22m  [36m1.62 kB[39m[2m | [22m              [36m754 bytes[39m
+
+[1m [22m                   [2m | [22m[1mInitial total[22m          [2m | [22m[1m338.11 kB[22m[2m | [22m               [1m86.98 kB[22m
+
+[1mLazy chunk files[22m    [2m | [22m[1mNames[22m                  [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-I3CCFQ6M.js[39m   [2m | [22m[2m-[22m                      [2m | [22m [36m51.96 kB[39m[2m | [22m               [36m11.42 kB[39m
+[32mchunk-BS7JPQLX.js[39m   [2m | [22m[2mproject-details[22m        [2m | [22m [36m28.97 kB[39m[2m | [22m                [36m7.04 kB[39m
+[32mchunk-W5DC5V47.js[39m   [2m | [22m[2mdashboard-component[22m    [2m | [22m [36m21.17 kB[39m[2m | [22m                [36m5.53 kB[39m
+[32mchunk-EZOERR4B.js[39m   [2m | [22m[2mhome-component[22m         [2m | [22m [36m16.04 kB[39m[2m | [22m                [36m3.70 kB[39m
+[32mchunk-NMXVJ746.js[39m   [2m | [22m[2mlogin-component[22m        [2m | [22m  [36m2.17 kB[39m[2m | [22m                [36m1.06 kB[39m
+[32mchunk-OMGEXK64.js[39m   [2m | [22m[2mauth-callback-component[22m[2m | [22m  [36m1.01 kB[39m[2m | [22m                [36m1.01 kB[39m
+
+
+[35mServer bundles[39m      
+[1mInitial chunk files[22m [2m | [22m[1mNames[22m                  [2m | [22m [1mRaw size[22m
+[32mserver.mjs[39m          [2m | [22m[2mserver[22m                 [2m | [22m[36m806.34 kB[39m[2m | [22m                       
+[32mmain.server.mjs[39m     [2m | [22m[2mmain.server[22m            [2m | [22m[36m436.93 kB[39m[2m | [22m                       
+[32mchunk-MAKPA5UK.mjs[39m  [2m | [22m[2m-[22m                      [2m | [22m[36m283.82 kB[39m[2m | [22m                       
+[32mpolyfills.server.mjs[39m[2m | [22m[2mpolyfills.server[22m       [2m | [22m[36m233.25 kB[39m[2m | [22m                       
+[32mchunk-TMXKRWEH.mjs[39m  [2m | [22m[2m-[22m                      [2m | [22m  [36m1.79 kB[39m[2m | [22m                       
+[32mchunk-L2MVFUKD.mjs[39m  [2m | [22m[2m-[22m                      [2m | [22m  [36m1.32 kB[39m[2m | [22m                       
+[32mchunk-T55IDOPT.mjs[39m  [2m | [22m[2m-[22m                      [2m | [22m[36m976 bytes[39m[2m | [22m                       
+
+[1mLazy chunk files[22m    [2m | [22m[1mNames[22m                  [2m | [22m [1mRaw size[22m
+[32mchunk-LBK4TYKI.mjs[39m  [2m | [22m[2m-[22m                      [2m | [22m [36m52.04 kB[39m[2m | [22m                       
+[32mchunk-VELNVLWV.mjs[39m  [2m | [22m[2mproject-details[22m        [2m | [22m [36m29.05 kB[39m[2m | [22m                       
+[32mchunk-D6JJELHA.mjs[39m  [2m | [22m[2mdashboard-component[22m    [2m | [22m [36m21.24 kB[39m[2m | [22m                       
+[32mchunk-W5NWKVC2.mjs[39m  [2m | [22m[2mhome-component[22m         [2m | [22m [36m16.10 kB[39m[2m | [22m                       
+[32mchunk-RHDGF2TI.mjs[39m  [2m | [22m[2mxhr2[22m                   [2m | [22m [36m12.14 kB[39m[2m | [22m                       
+[32mchunk-N3SI5I4Q.mjs[39m  [2m | [22m[2mxhr2[22m                   [2m | [22m [36m12.07 kB[39m[2m | [22m                       
+[32mchunk-4JJA2MSJ.mjs[39m  [2m | [22m[2mlogin-component[22m        [2m | [22m  [36m2.24 kB[39m[2m | [22m                       
+[32mchunk-NL3ZNNCZ.mjs[39m  [2m | [22m[2mauth-callback-component[22m[2m | [22m  [36m1.07 kB[39m[2m | [22m                       
+
+[35mPrerendered 4 static routes.[39m
+Application bundle generation complete. [6.632 seconds] - 2026-02-09T03:35:54.248Z
+
+Output location: C:\Users\moura\Documents\Scaffold\frontend\dist\frontend
+

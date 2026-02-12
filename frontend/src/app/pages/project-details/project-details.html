@@ -18,7 +18,7 @@
             </svg>
             <input
               type="text"
-              placeholder="Search for anything..."
+              placeholder="Rechercher..."
               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
             />
           </div>
@@ -33,7 +33,7 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
-            Create New Ticket
+            Créer un ticket
           </button>
 
           <!-- Notifications -->
@@ -52,7 +52,7 @@
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-2">
-            <span class="text-xs text-gray-500 uppercase">Project</span>
+            <span class="text-xs text-gray-500 uppercase">Projet</span>
             <h1 class="text-xl font-bold text-gray-800 flex items-center gap-2">
               <span class="text-2xl">🔥</span>
               {{ projectName() }}
@@ -63,18 +63,18 @@
         <div class="flex items-center gap-4">
           <!-- Visibility -->
           <div class="flex items-center gap-2 text-sm text-gray-500">
-            <span class="uppercase text-xs">Visibility</span>
+            <span class="uppercase text-xs">Visibilité</span>
             <span class="flex items-center gap-1 text-gray-700">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
               </svg>
-              Private Board
+              Tableau privé
             </span>
           </div>
 
           <!-- Team -->
           <div class="flex items-center gap-2">
-            <span class="text-xs text-gray-500 uppercase">Team</span>
+            <span class="text-xs text-gray-500 uppercase">Équipe</span>
             <div class="flex -space-x-2">
               <div class="w-8 h-8 rounded-full bg-indigo-500 border-2 border-white flex items-center justify-center text-white text-xs font-bold">JD</div>
               <div class="w-8 h-8 rounded-full bg-green-500 border-2 border-white flex items-center justify-center text-white text-xs font-bold">MK</div>
@@ -114,7 +114,7 @@
 
         <!-- Recent Activity -->
         <div class="mt-6">
-          <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Activité récente</h3>
           <div class="space-y-4">
             @for (activity of recentActivity(); track activity.id) {
               <div class="flex items-start gap-3">
@@ -133,30 +133,30 @@
             }
 
             @if (recentActivity().length === 0) {
-              <p class="text-sm text-gray-400 text-center py-4">No recent activity</p>
+              <p class="text-sm text-gray-400 text-center py-4">Aucune activité récente</p>
             }
           </div>
         </div>
 
         <!-- Stats Quick View -->
         <div class="mt-6 p-4 bg-gray-50 rounded-xl">
-          <h4 class="text-sm font-semibold text-gray-800 mb-3">Quick Stats</h4>
+          <h4 class="text-sm font-semibold text-gray-800 mb-3">Statistiques rapides</h4>
           <div class="grid grid-cols-2 gap-3">
             <div class="text-center">
               <p class="text-2xl font-bold text-gray-800">{{ stats().total }}</p>
-              <p class="text-xs text-gray-500">Total Tickets</p>
+              <p class="text-xs text-gray-500">Tickets totaux</p>
             </div>
             <div class="text-center">
               <p class="text-2xl font-bold text-green-600">{{ stats().progress }}%</p>
-              <p class="text-xs text-gray-500">Completed</p>
+              <p class="text-xs text-gray-500">Terminés</p>
             </div>
             <div class="text-center">
               <p class="text-2xl font-bold text-blue-600">{{ stats().inProgress }}</p>
-              <p class="text-xs text-gray-500">In Progress</p>
+              <p class="text-xs text-gray-500">En cours</p>
             </div>
             <div class="text-center">
               <p class="text-2xl font-bold text-orange-600">{{ stats().totalHours }}h</p>
-              <p class="text-xs text-gray-500">Estimated</p>
+              <p class="text-xs text-gray-500">Estimé</p>
             </div>
           </div>
         </div>
@@ -165,10 +165,19 @@
   </div>
 </div>
 
-<!-- Modal -->
+<!-- Create Ticket Modal -->
 @if (isModalOpen()) {
   <app-create-ticket-modal
     (onClose)="closeModal()"
     (onSubmit)="createTicket($event)"
+  />
+}
+
+<!-- Ticket Detail Modal -->
+@if (isDetailModalOpen() && selectedTicket()) {
+  <app-ticket-detail-modal
+    [ticket]="selectedTicket()!"
+    (close)="closeDetailModal()"
+    (statusChange)="handleDetailStatusChange($event)"
   />
 }

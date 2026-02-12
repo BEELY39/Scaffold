@@ -1,0 +1,13 @@
+<div class="flex gap-4 overflow-x-auto pb-4">
+  @for (column of columns(); track column.status) {
+    <app-kanban-column
+      [title]="column.title"
+      [status]="column.status"
+      [tickets]="column.tickets"
+      [color]="column.color"
+      (onAddTicket)="addTicket.emit($event)"
+      (onTicketClick)="ticketClick.emit($event)"
+      (onStatusChange)="statusChange.emit($event)"
+    />
+  }
+</div>

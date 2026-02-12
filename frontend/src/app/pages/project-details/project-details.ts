@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { KanbanBoard, StatusChangeEvent, TicketStatus } from '../../components/kanban-board/kanban-board';
 import { CreateTicketModal } from '../../components/create-ticket-modal/create-ticket-modal';
+import { TicketDetailModal } from '../../components/ticket-detail-modal/ticket-detail-modal';
 import { Sidebar, Project as SidebarProject } from '../../components/sidebar/sidebar';
 import { AiGenerator, AiGeneratorInput } from '../../components/ai-generator/ai-generator';
 import { Ticket, CreateTicketDto } from '../../models/ticket.model';
@@ -21,7 +22,7 @@ interface Activity {
 
 @Component({
   selector: 'app-project-details',
-  imports: [CommonModule, KanbanBoard, CreateTicketModal, Sidebar, AiGenerator],
+  imports: [CommonModule, KanbanBoard, CreateTicketModal, TicketDetailModal, Sidebar, AiGenerator],
   templateUrl: './project-details.html',
   styles: ``,
 })
@@ -35,6 +36,8 @@ export class ProjectDetails implements OnInit {
   projectId = signal<number>(0);
   projectName = signal<string>('My Project');
   isModalOpen = signal(false);
+  isDetailModalOpen = signal(false);
+  selectedTicket = signal<Ticket | null>(null);
   isLoading = signal(true);
   isGenerating = signal(false);
   tickets = signal<Ticket[]>([]);
@@ -150,8 +153,24 @@ export class ProjectDetails implements OnInit {
   }
 
   openTicketDetails(ticket: Ticket): void {
-    // TODO: Ouvrir un modal de détails ou naviguer vers une page de détails
-    console.log('Open ticket details:', ticket);
+    this.selectedTicket.set(ticket);
+    this.isDetailModalOpen.set(true);
+  }
+
+  closeDetailModal(): void {
+    this.isDetailModalOpen.set(false);
+    this.selectedTicket.set(null);
+  }
+
+  handleDetailStatusChange(event: { ticketId: number; newStatus: Ticket['status'] }): void {
+    this.ticketService.update(event.ticketId, { status: event.newStatus }).subscribe({
+      next: (updatedTicket) => {
+        this.tickets.update((current) =>
+          current.map((t) => (t.id === updatedTicket.id ? updatedTicket : t))
+        );
+        this.selectedTicket.set(updatedTicket);
+      },
+    });
   }
 
   createTicket(ticketData: CreateTicketDto): void {

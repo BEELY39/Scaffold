@@ -1,0 +1,54 @@
+<div class="w-72 min-w-72 flex flex-col bg-gray-50 rounded-xl">
+  <!-- Column Header -->
+  <div class="flex items-center justify-between p-4 border-b border-gray-200">
+    <div class="flex items-center gap-2">
+      <span
+        class="w-2 h-2 rounded-full"
+        [class.bg-gray-400]="color() === 'gray'"
+        [class.bg-blue-500]="color() === 'blue'"
+        [class.bg-yellow-500]="color() === 'yellow'"
+        [class.bg-green-500]="color() === 'green'"
+      ></span>
+      <h3 class="font-semibold text-gray-800">{{ title() }}</h3>
+      <span class="text-xs text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full">
+        {{ tickets().length }}
+      </span>
+    </div>
+    <div class="flex items-center gap-1">
+      <button class="p-1 hover:bg-gray-200 rounded text-gray-500">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"/>
+        </svg>
+      </button>
+      <button
+        (click)="onAddTicket.emit(status())"
+        class="p-1 hover:bg-gray-200 rounded text-gray-500"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tickets -->
+  <div
+    class="flex-1 p-3 space-y-3 overflow-y-auto max-h-[calc(100vh-300px)]"
+    (dragover)="onDragOver($event)"
+    (drop)="onDrop($event)"
+  >
+    @for (ticket of tickets(); track ticket.id) {
+      <app-kanban-card
+        [ticket]="ticket"
+        (onClick)="onTicketClick.emit(ticket)"
+        (onDragStart)="handleDragStart($event)"
+      />
+    }
+
+    @if (tickets().length === 0) {
+      <div class="text-center py-8 text-gray-400 text-sm">
+        Aucun ticket
+      </div>
+    }
+  </div>
+</div>

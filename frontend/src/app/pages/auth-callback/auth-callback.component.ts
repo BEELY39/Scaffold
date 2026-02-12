@@ -6,15 +6,7 @@ import { AuthService } from '../../services/auth';
 @Component({
   selector: 'app-auth-callback',
   standalone: true,
-  template: `
-    <div class="min-h-screen bg-gray-900 flex items-center justify-center">
-      <div class="text-center">
-        <!-- Spinner -->
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-600 border-t-blue-500 mb-4"></div>
-        <p class="text-gray-400">Connexion en cours...</p>
-      </div>
-    </div>
-  `,
+  templateUrl: './auth-callback.component.html',
 })
 export class AuthCallbackComponent implements OnInit {
   private route = inject(ActivatedRoute);

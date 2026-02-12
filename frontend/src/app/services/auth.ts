@@ -2,6 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 
 export interface User {
@@ -52,7 +53,7 @@ export class AuthService {
   /**
    * Gère le callback après authentification Google
    */
-  handleCallback(token: string, returnUrl: string = '/'): void {
+  handleCallback(token: string, returnUrl: string = '/dashboard'): void {
     this.saveToken(token);
     // Charger le user puis rediriger
     this.http.get<User>(`${environment.apiUrl}/api/auth/me`).subscribe({
@@ -143,5 +144,30 @@ export class AuthService {
     const url = localStorage.getItem(this.RETURN_URL_KEY);
     localStorage.removeItem(this.RETURN_URL_KEY);
     return url;
+  }
+
+  /**
+   * Inscription par email/password
+   */
+  register(
+    fullName: string,
+    email: string,
+    password: string,
+    passwordConfirmation: string
+  ): Observable<{ token: string; user: User }> {
+    return this.http.post<{ token: string; user: User }>(
+      `${environment.apiUrl}/auth/register`,
+      { fullName, email, password, passwordConfirmation }
+    );
+  }
+
+  /**
+   * Connexion par email/password
+   */
+  emailLogin(email: string, password: string): Observable<{ token: string; user: User }> {
+    return this.http.post<{ token: string; user: User }>(
+      `${environment.apiUrl}/auth/login`,
+      { email, password }
+    );
   }
 }
