@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import hash from '@adonisjs/core/services/hash'
 import User from '#models/user'
 import { EmailVerificationService } from '#services/email_verification_service'
+import env from '#start/env'
 
 export default class AuthController {
   /**
@@ -64,8 +65,7 @@ export default class AuthController {
     const token = await User.accessTokens.create(user)
 
     // Redirige vers le frontend avec le token
-    // Tu peux changer cette URL selon ton frontend
-    const frontendUrl = `http://localhost:4200/auth/callback?token=${token.value!.release()}`
+    const frontendUrl = `${env.get('FRONTEND_URL')}/auth/callback?token=${token.value!.release()}`
     return response.redirect(frontendUrl)
   }
 
