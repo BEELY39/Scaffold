@@ -5,6 +5,9 @@
     (onLogout)="logout()"
   />
 
+  <!-- Cookie Consent Banner -->
+  <app-cookie-consent />
+
   <!-- Main Content -->
   <div class="flex-1 flex flex-col overflow-hidden">
     <!-- Top Header -->
@@ -16,24 +19,45 @@
         </div>
 
         <div class="flex items-center gap-4">
+          <!-- Home Button -->
+          <a
+            routerLink="/"
+            class="p-2 text-gray-500 hover:text-indigo-600 hover:bg-gray-100 rounded-lg transition-colors"
+            title="Retour à l'accueil"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </a>
+
           <!-- Usage Badge -->
           @if (usage()) {
             <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg">
               <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
               </svg>
-              <span class="text-sm font-medium text-gray-700">
-                {{ usage()!.used }}/{{ usage()!.limit }} generations
-              </span>
-              @if (usage()!.remaining === 0) {
-                <span class="text-xs text-red-500 font-medium">(Limite atteinte)</span>
+              @if (usage()!.limit === -1) {
+                <!-- Plan Pro - Illimité -->
+                <span class="text-sm font-medium text-indigo-600">Pro - Illimité</span>
+              } @else {
+                <span class="text-sm font-medium text-gray-700">
+                  {{ usage()!.used }}/{{ usage()!.limit }} générations
+                </span>
+                @if (usage()!.remaining === 0) {
+                  <button
+                    (click)="openUpgradeModal()"
+                    class="text-xs text-indigo-600 hover:text-indigo-700 font-semibold"
+                  >
+                    Passer en Pro
+                  </button>
+                }
               }
             </div>
           }
 
           <button
             (click)="openCreateModal()"
-            [disabled]="usage()?.remaining === 0"
+            [disabled]="usage()?.remaining === 0 && usage()?.limit !== -1"
             class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium rounded-lg flex items-center gap-2 transition-colors"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -178,4 +202,116 @@
     (close)="closeModal()"
     (create)="createProject($event)"
   />
+}
+
+<!-- Upgrade to Pro Modal -->
+@if (showUpgradeModal()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center">
+    <!-- Backdrop -->
+    <div
+      class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+      (click)="closeUpgradeModal()"
+    ></div>
+
+    <!-- Modal -->
+    <div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 overflow-hidden">
+      <!-- Header gradient -->
+      <div class="bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 px-8 py-10 text-center">
+        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-white mb-2">Passez au Plan Pro</h2>
+        <p class="text-white/80">Débloquez des générations illimitées</p>
+      </div>
+
+      <!-- Content -->
+      <div class="px-8 py-6">
+        <div class="text-center mb-6">
+          <p class="text-gray-600 mb-4">
+            Vous avez atteint votre limite de <span class="font-semibold">{{ usage()?.limit }} générations</span> ce mois-ci.
+          </p>
+          <p class="text-sm text-gray-500">
+            Prochaine réinitialisation: <span class="font-medium">{{ usage()?.resetDate | date:'dd MMMM yyyy' }}</span>
+          </p>
+        </div>
+
+        <!-- Plan comparison -->
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <!-- Free Plan -->
+          <div class="border border-gray-200 rounded-xl p-4">
+            <h3 class="font-semibold text-gray-800 mb-2">Gratuit</h3>
+            <p class="text-2xl font-bold text-gray-800 mb-3">0€<span class="text-sm font-normal text-gray-500">/mois</span></p>
+            <ul class="text-sm text-gray-600 space-y-2">
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                2 générations/mois
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Projets illimités
+              </li>
+            </ul>
+          </div>
+
+          <!-- Pro Plan -->
+          <div class="border-2 border-indigo-500 rounded-xl p-4 relative bg-indigo-50/50">
+            <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-indigo-600 text-white text-xs font-semibold rounded-full">
+              Recommandé
+            </span>
+            <h3 class="font-semibold text-gray-800 mb-2">Pro</h3>
+            <p class="text-2xl font-bold text-indigo-600 mb-3">4,99€<span class="text-sm font-normal text-gray-500">/mois</span></p>
+            <ul class="text-sm text-gray-600 space-y-2">
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                <span class="font-medium">Générations illimitées</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Projets illimités
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Support prioritaire
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3">
+          <button
+            (click)="closeUpgradeModal()"
+            class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Plus tard
+          </button>
+          <button
+            (click)="upgradeToPro()"
+            class="flex-1 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Passer au Pro
+          </button>
+        </div>
+
+        <p class="text-xs text-gray-400 text-center mt-4">
+          Paiement sécurisé via Stripe. Annulez à tout moment.
+        </p>
+      </div>
+    </div>
+  </div>
 }

@@ -14,7 +14,22 @@ export class UsageService {
    * Vérifie si l'utilisateur peut générer des tickets
    */
   async canGenerate(user: User): Promise<UsageInfo> {
-    // Reset mensuel si nécessaire
+    // Plan Pro avec abonnement actif = générations illimitées
+    if (user.planType === 'pro' && user.subscriptionStatus === 'active') {
+      const resetDate = user.billingPeriodStart
+        ? user.billingPeriodStart.plus({ months: 1 })
+        : DateTime.now().plus({ months: 1 })
+
+      return {
+        allowed: true,
+        remaining: -1, // -1 = illimité
+        limit: -1,
+        used: user.aiGenerationsThisMonth,
+        resetDate,
+      }
+    }
+
+    // Reset mensuel si nécessaire (plan free)
     await this.checkAndResetMonthlyUsage(user)
 
     const remaining = user.aiGenerationsLimit - user.aiGenerationsThisMonth

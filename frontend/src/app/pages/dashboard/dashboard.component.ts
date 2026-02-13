@@ -5,8 +5,10 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { ProjectService } from '../../services/project.service';
 import { TicketService } from '../../services/ticket.service';
+import { PaymentService } from '../../services/payment.service';
 import { Sidebar, Project as SidebarProject } from '../../components/sidebar/sidebar';
 import { CreateProjectModal } from '../../components/create-project-modal/create-project-modal';
+import { CookieConsentComponent } from '../../components/cookie-consent/cookie-consent';
 import { Project, CreateProjectDto } from '../../models/project.model';
 import { environment } from '../../../environments/environment';
 
@@ -21,7 +23,7 @@ interface UsageInfo {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, Sidebar, CreateProjectModal],
+  imports: [CommonModule, RouterLink, Sidebar, CreateProjectModal, CookieConsentComponent],
   templateUrl: './dashboard.component.html',
   styles: [`
     .line-clamp-2 {
@@ -36,6 +38,7 @@ export class DashboardComponent implements OnInit {
   authService = inject(AuthService);
   private projectService = inject(ProjectService);
   private ticketService = inject(TicketService);
+  private paymentService = inject(PaymentService);
   private router = inject(Router);
   private http = inject(HttpClient);
 
@@ -46,6 +49,7 @@ export class DashboardComponent implements OnInit {
 
   // Usage/Plan limits
   usage = signal<UsageInfo | null>(null);
+  showUpgradeModal = signal(false);
 
   // Stats - tu peux les calculer depuis les tickets plus tard
   totalTicketsDone = signal(0);
@@ -139,6 +143,25 @@ export class DashboardComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  openUpgradeModal(): void {
+    this.showUpgradeModal.set(true);
+  }
+
+  closeUpgradeModal(): void {
+    this.showUpgradeModal.set(false);
+  }
+
+  upgradeToPro(): void {
+    this.paymentService.createCheckout().subscribe({
+      next: ({ url }) => {
+        window.location.href = url;
+      },
+      error: (err) => {
+        alert(err.error?.message || 'Erreur lors de la redirection vers le paiement');
+      },
+    });
   }
 
   getProjectInitials(name: string): string {

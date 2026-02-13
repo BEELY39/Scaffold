@@ -1,6 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import hash from '@adonisjs/core/services/hash'
 import User from '#models/user'
+import { EmailVerificationService } from '#services/email_verification_service'
 
 export default class AuthController {
   /**
@@ -117,6 +118,15 @@ export default class AuthController {
     if (password.length < 8) {
       return response.status(422).json({
         message: 'Le mot de passe doit contenir au moins 8 caractères',
+      })
+    }
+
+    // Vérifier si l'email existe réellement (Maileroo/Zeruh API)
+    const emailVerificationService = new EmailVerificationService()
+    const emailError = await emailVerificationService.validateForRegistration(email)
+    if (emailError) {
+      return response.status(422).json({
+        message: emailError,
       })
     }
 

@@ -111,7 +111,9 @@ Réponds UNIQUEMENT avec un tableau JSON valide, sans texte avant ou après.`
       throw new Error(`Gemini API error: ${error}`)
     }
 
-    const data = await response.json()
+    const data = (await response.json()) as {
+      candidates: Array<{ content: { parts: Array<{ text: string }> } }>
+    }
     const content = data.candidates[0].content.parts[0].text
 
     // Nettoyer la réponse (enlever les backticks markdown si présents)

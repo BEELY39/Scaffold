@@ -17,13 +17,24 @@
         <a href="#pricing" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Tarifs</a>
         <a href="#testimonials" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Avis</a>
         <a href="#faq" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">FAQ</a>
-        <a routerLink="/login" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Connexion</a>
+        @if (authService.isReady() && !authService.isAuthenticated()) {
+          <a routerLink="/login" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Connexion</a>
+        }
       </div>
 
       <div>
-        <a routerLink="/login" class="px-5 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-full hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30">
-          S'inscrire
-        </a>
+        @if (!authService.isReady()) {
+          <!-- Placeholder pendant le chargement -->
+          <div class="w-32 h-10 bg-gray-200 rounded-full animate-pulse"></div>
+        } @else if (authService.isAuthenticated()) {
+          <a routerLink="/dashboard" class="px-5 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-full hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30">
+            Aller au dashboard
+          </a>
+        } @else {
+          <a routerLink="/login" class="px-5 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-full hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30">
+            S'inscrire
+          </a>
+        }
       </div>
     </div>
   </nav>

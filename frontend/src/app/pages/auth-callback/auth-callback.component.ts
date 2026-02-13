@@ -17,8 +17,8 @@ export class AuthCallbackComponent implements OnInit {
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       const token = this.route.snapshot.queryParamMap.get('token');
-      // Retrieve returnUrl from AuthService (localStorage) or query params
-      const returnUrl = this.authService.getAndClearReturnUrl() || this.route.snapshot.queryParamMap.get('returnUrl') || '/';
+      // Retrieve returnUrl from AuthService (localStorage) or query params, default to dashboard
+      const returnUrl = this.authService.getAndClearReturnUrl() || this.route.snapshot.queryParamMap.get('returnUrl') || '/dashboard';
 
       if (token) {
         this.authService.handleCallback(token, returnUrl);

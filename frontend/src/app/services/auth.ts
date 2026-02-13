@@ -23,11 +23,16 @@ export class AuthService {
   private readonly router = inject(Router);
 
   user = signal<User | null>(null);
+  isReady = signal(false);
 
   constructor() {
     // Charge l'utilisateur au démarrage si un token existe (côté browser uniquement)
-    if (this.isBrowser() && this.getToken()) {
-      this.loadUser();
+    if (this.isBrowser()) {
+      if (this.getToken()) {
+        this.loadUser();
+      } else {
+        this.isReady.set(true);
+      }
     }
   }
 
@@ -74,13 +79,18 @@ export class AuthService {
    */
   loadUser(): void {
     if (!this.isBrowser() || !this.getToken()) {
+      this.isReady.set(true);
       return;
     }
     this.http.get<User>(`${environment.apiUrl}/api/auth/me`).subscribe({
-      next: (user) => this.user.set(user),
+      next: (user) => {
+        this.user.set(user);
+        this.isReady.set(true);
+      },
       error: () => {
         this.clearToken();
         this.user.set(null);
+        this.isReady.set(true);
       },
     });
   }

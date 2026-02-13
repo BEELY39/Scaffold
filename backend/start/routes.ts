@@ -12,6 +12,7 @@ const ProjectController = () => import('#controllers/projects_controller')
 const UsersController = () => import('#controllers/users_controller')
 const TicketsController = () => import('#controllers/tickets_controller')
 const AuthController = () => import('#controllers/auth_controller')
+const PaymentsController = () => import('#controllers/payments_controller')
 import { middleware } from '#start/kernel'
 
 router.get('/', async () => {
@@ -28,6 +29,9 @@ router.get('/auth/google/callback', [AuthController, 'callback'])
 router.post('/auth/register', [AuthController, 'register'])
 router.post('/auth/login', [AuthController, 'login'])
 
+// Stripe webhook (public, requires raw body)
+router.post('/api/payments/webhook', [PaymentsController, 'webhook'])
+
 router.group(() => {
   // Auth
   router.get('/auth/me', [AuthController, 'me'])
@@ -42,6 +46,11 @@ router.group(() => {
 
   // Usage (plan limits)
   router.get('/usage', [ProjectController, 'getUsage'])
+
+  // Payments (Stripe)
+  router.post('/payments/create-checkout', [PaymentsController, 'createCheckout'])
+  router.post('/payments/cancel', [PaymentsController, 'cancelSubscription'])
+  router.get('/payments/portal', [PaymentsController, 'customerPortal'])
 
   // Projects
   router.get('/projects', [ProjectController, 'index'])

@@ -28,4 +28,7 @@ compose.yml
 #logs
 *.har
 *.log
+#md
+*.md
+
 

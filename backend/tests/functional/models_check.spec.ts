@@ -20,14 +20,11 @@ test.group('Models Integrity', (group) => {
       userId: user.id,
       name: 'Metron',
       description: 'Compliance-as-a-Service',
-      tech_stack: {
-        frontend: 'Angular',
-        backend: 'AdonisJS'
-      }
+      tech_stack: ['Angular', 'AdonisJS']
     })
 
     assert.equal(project.name, 'Metron')
     assert.equal(project.userId, user.id)
-    assert.equal((project.tech_stack as any).backend, 'AdonisJS')
+    assert.isTrue(project.tech_stack.includes('AdonisJS'))
   })
 })

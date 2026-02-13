@@ -35,6 +35,15 @@ export default class User extends BaseModel {
   @column.dateTime()
   declare billingPeriodStart: DateTime
 
+  @column()
+  declare stripeCustomerId: string | null
+
+  @column()
+  declare stripeSubscriptionId: string | null
+
+  @column()
+  declare subscriptionStatus: string | null // 'active' | 'canceled' | 'past_due'
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

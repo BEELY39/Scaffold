@@ -44,5 +44,22 @@ export default await Env.create(new URL('../', import.meta.url), {
   |----------------------------------------------------------
   */
   GEMINI_API_KEY: Env.schema.string(),
-  GEMINI_API_URL: Env.schema.string()
+  GEMINI_API_URL: Env.schema.string(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for Email Verification (Maileroo/Zeruh)
+  |----------------------------------------------------------
+  */
+  MAILEROO_API_KEY: Env.schema.string.optional(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for Stripe Payments
+  |----------------------------------------------------------
+  */
+  STRIPE_SECRET_KEY: Env.schema.string(),
+  STRIPE_WEBHOOK_SECRET: Env.schema.string(),
+  STRIPE_PRICE_ID_PRO: Env.schema.string(),
+  FRONTEND_URL: Env.schema.string(),
 })
