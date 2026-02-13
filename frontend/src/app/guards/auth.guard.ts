@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { inject, PLATFORM_ID } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 import { AuthService } from '../services/auth';
 
 /**
