@@ -1,4 +1,4 @@
-<div class="bg-white rounded-xl border border-gray-200 p-6">
+<div class="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 p-6">
   <div class="flex items-center gap-3 mb-6">
     <div class="w-10 h-10 bg-linear-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center">
       <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -6,53 +6,53 @@
       </svg>
     </div>
     <div>
-      <h3 class="text-lg font-semibold text-gray-800">Générateur de tickets IA</h3>
-      <p class="text-sm text-gray-500">Décrivez votre projet et laissez l'IA générer des tickets professionnels</p>
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Générateur de tickets IA</h3>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Décrivez votre projet et laissez l'IA générer des tickets professionnels</p>
     </div>
   </div>
 
   <div class="space-y-4">
     <!-- Project Name -->
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Nom du projet</label>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nom du projet</label>
       <input
         type="text"
         [(ngModel)]="formData.projectName"
         placeholder="ex: Plateforme E-commerce"
-        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+        class="w-full px-4 py-2 border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500"
       />
     </div>
 
     <!-- Project Description -->
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Description du projet</label>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description du projet</label>
       <textarea
         [(ngModel)]="formData.projectDescription"
         rows="3"
         placeholder="Décrivez l'objectif principal et les fonctionnalités de votre projet..."
-        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-none"
+        class="w-full px-4 py-2 border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-none placeholder-gray-400 dark:placeholder-gray-500"
       ></textarea>
     </div>
 
     <!-- Tech Stack -->
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Stack technique</label>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Stack technique</label>
       <input
         type="text"
         [(ngModel)]="formData.techStack"
         placeholder="ex: Angular, Node.js, PostgreSQL"
-        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+        class="w-full px-4 py-2 border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500"
       />
     </div>
 
     <!-- Additional Context -->
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Contexte supplémentaire (Optionnel)</label>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Contexte supplémentaire (Optionnel)</label>
       <textarea
         [(ngModel)]="formData.additionalContext"
         rows="2"
         placeholder="Exigences spécifiques, contraintes ou préférences..."
-        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-none"
+        class="w-full px-4 py-2 border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-none placeholder-gray-400 dark:placeholder-gray-500"
       ></textarea>
     </div>
 

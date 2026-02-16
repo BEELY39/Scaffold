@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Enable dark mode with class strategy */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --animate-blob: blob 7s infinite;
   --animate-float: float 6s ease-in-out infinite;
@@ -49,6 +52,41 @@
 html, body {
   height: 100%;
   margin: 0;
-  background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%); /* Soft Indigo to Purple */
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Theme-aware background */
+html {
+  background: #f3f4f6; /* light mode */
+}
+html.dark {
+  background: #09090b; /* dark mode */
+}
+
+/* Scrollbar style - Light mode */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #e5e7eb;
+}
+::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Scrollbar style - Dark mode */
+.dark ::-webkit-scrollbar-track {
+  background: #18181b;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
 }

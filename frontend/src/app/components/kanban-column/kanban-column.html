@@ -1,6 +1,6 @@
-<div class="w-72 min-w-72 flex flex-col bg-gray-50 rounded-xl">
+<div class="w-72 min-w-72 flex flex-col bg-gray-50 dark:bg-zinc-800/50 rounded-xl">
   <!-- Column Header -->
-  <div class="flex items-center justify-between p-4 border-b border-gray-200">
+  <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-zinc-700">
     <div class="flex items-center gap-2">
       <span
         class="w-2 h-2 rounded-full"
@@ -9,20 +9,20 @@
         [class.bg-yellow-500]="color() === 'yellow'"
         [class.bg-green-500]="color() === 'green'"
       ></span>
-      <h3 class="font-semibold text-gray-800">{{ title() }}</h3>
-      <span class="text-xs text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full">
+      <h3 class="font-semibold text-gray-800 dark:text-white">{{ title() }}</h3>
+      <span class="text-xs text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-zinc-700 px-2 py-0.5 rounded-full">
         {{ tickets().length }}
       </span>
     </div>
     <div class="flex items-center gap-1">
-      <button class="p-1 hover:bg-gray-200 rounded text-gray-500">
+      <button class="p-1 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded text-gray-500 dark:text-gray-400">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"/>
         </svg>
       </button>
       <button
         (click)="onAddTicket.emit(status())"
-        class="p-1 hover:bg-gray-200 rounded text-gray-500"
+        class="p-1 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded text-gray-500 dark:text-gray-400"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>

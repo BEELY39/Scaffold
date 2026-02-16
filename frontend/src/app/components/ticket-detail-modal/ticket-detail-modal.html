@@ -1,7 +1,7 @@
 <div class="backdrop fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" (click)="onBackdropClick($event)">
-  <div class="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col">
+  <div class="bg-white dark:bg-zinc-800 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col">
     <!-- Header -->
-    <div class="flex items-start justify-between p-6 border-b border-gray-100">
+    <div class="flex items-start justify-between p-6 border-b border-gray-100 dark:border-zinc-700">
       <div class="flex-1 pr-4">
         <div class="flex items-center gap-2 mb-2">
           <span [class]="getTypeColor(ticket.type)" class="text-xs font-semibold px-2 py-1 rounded-full uppercase">
@@ -11,10 +11,10 @@
             {{ ticket.priority }}
           </span>
         </div>
-        <h2 class="text-xl font-bold text-gray-900">{{ ticket.title }}</h2>
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ ticket.title }}</h2>
       </div>
-      <button (click)="close.emit()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <button (click)="close.emit()" class="p-2 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+        <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
         </svg>
       </button>
@@ -24,14 +24,14 @@
     <div class="flex-1 overflow-y-auto p-6 space-y-6">
       <!-- Status Selector -->
       <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-2">Status</label>
+        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Status</label>
         <div class="flex gap-2">
           @for (status of statuses; track status) {
             <button
               (click)="changeStatus(status)"
               [class]="ticket.status === status
                 ? getStatusColor(status) + ' border-2'
-                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'"
+                : 'bg-white dark:bg-zinc-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-zinc-600 hover:bg-gray-50 dark:hover:bg-zinc-600'"
               class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all"
             >
               {{ getStatusLabel(status) }}
@@ -42,82 +42,136 @@
 
       <!-- Description -->
       <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
-        <p class="text-gray-600 bg-gray-50 rounded-lg p-4">{{ ticket.description }}</p>
+        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Description</label>
+        <p class="text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-4">{{ ticket.description }}</p>
       </div>
 
       <!-- User Story -->
       @if (ticket.userStory) {
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2">User Story</label>
-          <p class="text-gray-600 bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500 italic">
+          <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">User Story</label>
+          <p class="text-gray-600 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4 border-l-4 border-blue-500 italic">
             {{ ticket.userStory }}
           </p>
         </div>
       }
 
       <!-- Technical Specs -->
-      @if (ticket.technicalSpecs && ticket.technicalSpecs.length > 0) {
-        <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2">Technical Specifications</label>
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Technical Specifications</label>
+        @if (isEnriching()) {
+          <!-- Skeleton loader -->
+          <div class="space-y-2 animate-pulse">
+            <div class="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-3/4"></div>
+            <div class="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-full"></div>
+            <div class="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-5/6"></div>
+          </div>
+        } @else if (enrichError()) {
+          <p class="text-red-500 text-sm">{{ enrichError() }}</p>
+        } @else if (ticket.technicalSpecs && ticket.technicalSpecs.length > 0) {
           <ul class="space-y-2">
             @for (spec of ticket.technicalSpecs; track spec) {
-              <li class="flex items-start gap-2 text-gray-600">
-                <svg class="w-5 h-5 text-indigo-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <li class="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                <svg class="w-5 h-5 text-indigo-500 dark:text-indigo-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
                 <span>{{ spec }}</span>
               </li>
             }
           </ul>
-        </div>
-      }
+        } @else {
+          <p class="text-gray-400 italic">Non disponible</p>
+        }
+      </div>
 
-      <!-- Acceptance Criteria -->
-      @if (ticket.acceptanceCriteria && ticket.acceptanceCriteria.length > 0) {
-        <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2">Acceptance Criteria</label>
+      <!-- Acceptance Criteria (Checklist) -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Acceptance Criteria</label>
+          @if (ticket.acceptanceCriteria && ticket.acceptanceCriteria.length > 0 && !isEnriching()) {
+            <span class="text-xs font-medium px-2 py-1 rounded-full"
+              [class]="getCheckedCount() === getTotalCriteria() ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400' : 'bg-gray-100 dark:bg-zinc-700 text-gray-600 dark:text-gray-400'">
+              {{ getCheckedCount() }}/{{ getTotalCriteria() }}
+            </span>
+          }
+        </div>
+        @if (isEnriching()) {
+          <!-- Skeleton loader -->
+          <div class="space-y-2 animate-pulse">
+            <div class="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-5/6"></div>
+            <div class="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-3/4"></div>
+            <div class="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-full"></div>
+          </div>
+        } @else if (enrichError()) {
+          <p class="text-red-500 text-sm">{{ enrichError() }}</p>
+        } @else if (ticket.acceptanceCriteria && ticket.acceptanceCriteria.length > 0) {
           <ul class="space-y-2">
-            @for (criteria of ticket.acceptanceCriteria; track criteria) {
-              <li class="flex items-start gap-2 text-gray-600">
-                <svg class="w-5 h-5 text-green-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-                <span>{{ criteria }}</span>
+            @for (criteria of ticket.acceptanceCriteria; track $index) {
+              <li
+                (click)="toggleCriteria($index)"
+                class="flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-all hover:bg-gray-50 dark:hover:bg-zinc-700"
+                [class.bg-green-50]="isCriteriaChecked($index)"
+                [class.dark:bg-green-900/30]="isCriteriaChecked($index)"
+              >
+                <!-- Checkbox -->
+                <div class="shrink-0 mt-0.5">
+                  @if (isCriteriaChecked($index)) {
+                    <div class="w-5 h-5 bg-green-500 rounded flex items-center justify-center">
+                      <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                      </svg>
+                    </div>
+                  } @else {
+                    <div class="w-5 h-5 border-2 border-gray-300 dark:border-zinc-600 rounded hover:border-green-400 transition-colors"></div>
+                  }
+                </div>
+                <!-- Text -->
+                <span
+                  class="flex-1 text-sm"
+                  [class.text-gray-500]="isCriteriaChecked($index)"
+                  [class.dark:text-gray-400]="isCriteriaChecked($index)"
+                  [class.line-through]="isCriteriaChecked($index)"
+                  [class.text-gray-700]="!isCriteriaChecked($index)"
+                  [class.dark:text-gray-300]="!isCriteriaChecked($index)"
+                >
+                  {{ criteria }}
+                </span>
               </li>
             }
           </ul>
-        </div>
-      }
+        } @else {
+          <p class="text-gray-400 italic">Non disponible</p>
+        }
+      </div>
 
       <!-- Metadata Grid -->
       <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
         <!-- Complexity -->
-        <div class="bg-gray-50 rounded-lg p-4">
-          <label class="block text-xs font-medium text-gray-500 mb-1">Complexity</label>
+        <div class="bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-4">
+          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Complexity</label>
           <span class="text-lg text-yellow-500">{{ getComplexityStars(ticket.complexity) }}</span>
         </div>
 
         <!-- Estimated Hours -->
         @if (ticket.estimatedHours) {
-          <div class="bg-gray-50 rounded-lg p-4">
-            <label class="block text-xs font-medium text-gray-500 mb-1">Estimated Time</label>
-            <span class="text-lg font-semibold text-gray-800">{{ ticket.estimatedHours }}h</span>
+          <div class="bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-4">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Estimated Time</label>
+            <span class="text-lg font-semibold text-gray-800 dark:text-white">{{ ticket.estimatedHours }}h</span>
           </div>
         }
 
         <!-- Position -->
-        <div class="bg-gray-50 rounded-lg p-4">
-          <label class="block text-xs font-medium text-gray-500 mb-1">Position</label>
-          <span class="text-lg font-semibold text-gray-800">#{{ ticket.position }}</span>
+        <div class="bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-4">
+          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Position</label>
+          <span class="text-lg font-semibold text-gray-800 dark:text-white">#{{ ticket.position }}</span>
         </div>
       </div>
 
       <!-- Notes -->
       @if (ticket.notes) {
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
-          <p class="text-gray-600 bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-400">
+          <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Notes</label>
+          <p class="text-gray-600 dark:text-gray-300 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg p-4 border-l-4 border-yellow-400">
             {{ ticket.notes }}
           </p>
         </div>
@@ -125,10 +179,10 @@
     </div>
 
     <!-- Footer -->
-    <div class="flex justify-end gap-3 p-6 border-t border-gray-100 bg-gray-50">
+    <div class="flex justify-end gap-3 p-6 border-t border-gray-100 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800/50">
       <button
         (click)="close.emit()"
-        class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-colors"
+        class="px-4 py-2 bg-gray-200 dark:bg-zinc-700 hover:bg-gray-300 dark:hover:bg-zinc-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg transition-colors"
       >
         Close
       </button>

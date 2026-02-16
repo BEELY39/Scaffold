@@ -1,0 +1,187 @@
+<div class="flex h-screen bg-gray-100 dark:bg-zinc-900">
+  <!-- Sidebar -->
+  <app-sidebar />
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <header class="bg-white dark:bg-zinc-800 border-b border-gray-200 dark:border-zinc-700 px-6 py-4">
+      <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Paramètres</h1>
+    </header>
+
+    <main class="flex-1 p-6 overflow-y-auto">
+      <div class="max-w-3xl mx-auto">
+        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-gray-200 dark:border-zinc-700 overflow-hidden">
+          <!-- Tabs -->
+          <div class="flex border-b border-gray-200 dark:border-zinc-700">
+            <button
+              (click)="setActiveTab('general')"
+              [class.border-indigo-500]="activeTab() === 'general'"
+              [class.text-indigo-600]="activeTab() === 'general'"
+              [class.dark:text-indigo-400]="activeTab() === 'general'"
+              class="px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 border-b-2 border-transparent transition-colors"
+            >
+              Général
+            </button>
+            <button
+              (click)="setActiveTab('export')"
+              [class.border-indigo-500]="activeTab() === 'export'"
+              [class.text-indigo-600]="activeTab() === 'export'"
+              [class.dark:text-indigo-400]="activeTab() === 'export'"
+              class="px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 border-b-2 border-transparent transition-colors"
+            >
+              Export de données
+            </button>
+          </div>
+
+          <!-- Content -->
+          <div class="p-6">
+            @if (activeTab() === 'general') {
+              <div>
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-6">Apparence</h2>
+
+                <!-- Theme Selector -->
+                <div class="space-y-4">
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Thème de l'interface</label>
+
+                  <div class="grid grid-cols-2 gap-4">
+                    <!-- Dark Mode Option -->
+                    <button
+                      (click)="setTheme('dark')"
+                      class="relative p-4 rounded-xl border-2 transition-all"
+                      [class.border-indigo-500]="themeService.currentTheme() === 'dark'"
+                      [class.bg-indigo-50]="themeService.currentTheme() === 'dark'"
+                      [class.dark:bg-indigo-900/20]="themeService.currentTheme() === 'dark'"
+                      [class.border-gray-200]="themeService.currentTheme() !== 'dark'"
+                      [class.dark:border-zinc-600]="themeService.currentTheme() !== 'dark'"
+                      [class.hover:border-gray-300]="themeService.currentTheme() !== 'dark'"
+                      [class.dark:hover:border-zinc-500]="themeService.currentTheme() !== 'dark'"
+                    >
+                      <!-- Preview -->
+                      <div class="w-full aspect-video bg-zinc-900 rounded-lg mb-3 overflow-hidden border border-zinc-700">
+                        <div class="h-2 bg-zinc-800 flex items-center px-1 gap-0.5">
+                          <div class="w-1 h-1 rounded-full bg-red-500"></div>
+                          <div class="w-1 h-1 rounded-full bg-yellow-500"></div>
+                          <div class="w-1 h-1 rounded-full bg-green-500"></div>
+                        </div>
+                        <div class="flex h-full">
+                          <div class="w-1/4 bg-zinc-800 p-1">
+                            <div class="h-1 w-3/4 bg-zinc-700 rounded mb-1"></div>
+                            <div class="h-1 w-1/2 bg-zinc-700 rounded"></div>
+                          </div>
+                          <div class="flex-1 p-1">
+                            <div class="h-1 w-1/2 bg-zinc-700 rounded mb-1"></div>
+                            <div class="h-2 w-full bg-zinc-800 rounded"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                          <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                          </svg>
+                          <span class="font-medium text-gray-800 dark:text-white">Mode sombre</span>
+                        </div>
+                        @if (themeService.currentTheme() === 'dark') {
+                          <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                          </svg>
+                        }
+                      </div>
+                    </button>
+
+                    <!-- Light Mode Option -->
+                    <button
+                      (click)="setTheme('light')"
+                      class="relative p-4 rounded-xl border-2 transition-all"
+                      [class.border-indigo-500]="themeService.currentTheme() === 'light'"
+                      [class.bg-indigo-50]="themeService.currentTheme() === 'light'"
+                      [class.dark:bg-indigo-900/20]="themeService.currentTheme() === 'light'"
+                      [class.border-gray-200]="themeService.currentTheme() !== 'light'"
+                      [class.dark:border-zinc-600]="themeService.currentTheme() !== 'light'"
+                      [class.hover:border-gray-300]="themeService.currentTheme() !== 'light'"
+                      [class.dark:hover:border-zinc-500]="themeService.currentTheme() !== 'light'"
+                    >
+                      <!-- Preview -->
+                      <div class="w-full aspect-video bg-gray-100 rounded-lg mb-3 overflow-hidden border border-gray-200">
+                        <div class="h-2 bg-white flex items-center px-1 gap-0.5">
+                          <div class="w-1 h-1 rounded-full bg-red-500"></div>
+                          <div class="w-1 h-1 rounded-full bg-yellow-500"></div>
+                          <div class="w-1 h-1 rounded-full bg-green-500"></div>
+                        </div>
+                        <div class="flex h-full">
+                          <div class="w-1/4 bg-white p-1">
+                            <div class="h-1 w-3/4 bg-gray-200 rounded mb-1"></div>
+                            <div class="h-1 w-1/2 bg-gray-200 rounded"></div>
+                          </div>
+                          <div class="flex-1 p-1">
+                            <div class="h-1 w-1/2 bg-gray-200 rounded mb-1"></div>
+                            <div class="h-2 w-full bg-white rounded"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                          <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                          </svg>
+                          <span class="font-medium text-gray-800 dark:text-white">Mode clair</span>
+                        </div>
+                        @if (themeService.currentTheme() === 'light') {
+                          <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                          </svg>
+                        }
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            } @else if (activeTab() === 'export') {
+              <div>
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Exporter vos données</h2>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">
+                  Téléchargez une copie de tous vos tickets au format CSV. Ce format est compatible avec Excel, Jira, et la plupart des outils de gestion de projet.
+                </p>
+
+                <div class="bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-6 border border-gray-200 dark:border-zinc-600">
+                  <div class="flex items-start gap-4">
+                    <div class="p-3 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg text-indigo-600 dark:text-indigo-400">
+                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 class="font-medium text-gray-800 dark:text-white">Export CSV Global</h3>
+                      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-4">
+                        Inclut tous les tickets de tous les projets avec leur statut, priorité, et description.
+                      </p>
+                      <button
+                        (click)="exportTickets()"
+                        [disabled]="isExporting()"
+                        class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-medium rounded-lg flex items-center gap-2 transition-colors"
+                      >
+                        @if (isExporting()) {
+                          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                        } @else {
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        }
+                        Exporter les tickets
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
