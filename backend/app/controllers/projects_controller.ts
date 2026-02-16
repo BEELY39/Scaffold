@@ -122,6 +122,7 @@ export default class ProjectsController {
         techStack: (project.tech_stack as string[]) || [],
       })
 
+      // Créer les tickets SANS technicalSpecs/acceptanceCriteria (lazy loading)
       const tickets = await Promise.all(
         generatedTickets.map((ticketData) =>
           Ticket.create({
@@ -129,8 +130,9 @@ export default class ProjectsController {
             title: ticketData.title,
             description: ticketData.description,
             userStory: ticketData.userStory,
-            technicalSpecs: ticketData.technicalSpecs,
-            acceptanceCriteria: ticketData.acceptanceCriteria,
+            // technicalSpecs et acceptanceCriteria sont générés à la demande (lazy loading)
+            technicalSpecs: null,
+            acceptanceCriteria: null,
             type: ticketData.type,
             priority: ticketData.priority,
             complexity: ticketData.complexity,
@@ -193,6 +195,7 @@ export default class ProjectsController {
         techStack: (project.tech_stack as string[]) || [],
       })
 
+      // Créer les tickets SANS technicalSpecs/acceptanceCriteria (lazy loading)
       const tickets = await Promise.all(
         generatedTickets.map((ticketData) =>
           Ticket.create({
@@ -200,8 +203,9 @@ export default class ProjectsController {
             title: ticketData.title,
             description: ticketData.description,
             userStory: ticketData.userStory,
-            technicalSpecs: ticketData.technicalSpecs,
-            acceptanceCriteria: ticketData.acceptanceCriteria,
+            // technicalSpecs et acceptanceCriteria sont générés à la demande (lazy loading)
+            technicalSpecs: null,
+            acceptanceCriteria: null,
             type: ticketData.type,
             priority: ticketData.priority,
             complexity: ticketData.complexity,

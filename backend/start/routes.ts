@@ -68,4 +68,5 @@ router.group(() => {
   router.put('/tickets/:id', [TicketsController, 'update'])
   router.delete('/tickets/:id', [TicketsController, 'destroy'])
   router.get('/projects/:projectId/tickets', [TicketsController, 'byProject'])
+  router.post('/tickets/:id/enrich', [TicketsController, 'enrich'])
 }).prefix('/api').use(middleware.auth())

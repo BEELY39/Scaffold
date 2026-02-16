@@ -41,7 +41,14 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/legal/legal').then((m) => m.Legal),
   },
-  // Fallback
+  // Settings (protégé)
+  {
+    path: 'settings',
+    loadComponent: () =>
+      import('./pages/settings/settings.component').then((m) => m.SettingsComponent),
+    canActivate: [authGuard],
+  },
+  // Fallback (doit être en dernier)
   {
     path: '**',
     redirectTo: '',
