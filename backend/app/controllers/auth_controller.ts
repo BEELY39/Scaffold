@@ -39,17 +39,30 @@ export default class AuthController {
 
     /**
      * Trouve ou crée l'utilisateur
+     * D'abord chercher par googleId, sinon par email
      */
-    const user = await User.firstOrCreate(
-      { googleId: googleUser.id },
-      {
-        googleId: googleUser.id,
-        email: googleUser.email!,
-        fullName: googleUser.name,
-        avatar: googleUser.avatarUrl,
-        password: null,
+    let user = await User.findBy('googleId', googleUser.id)
+
+    if (!user) {
+      // Chercher par email (cas où l'utilisateur s'est inscrit par email d'abord)
+      user = await User.findBy('email', googleUser.email!)
+
+      if (user) {
+        // Lier le compte Google à l'utilisateur existant
+        user.googleId = googleUser.id
+        user.avatar = googleUser.avatarUrl
+        await user.save()
+      } else {
+        // Créer un nouvel utilisateur
+        user = await User.create({
+          googleId: googleUser.id,
+          email: googleUser.email!,
+          fullName: googleUser.name,
+          avatar: googleUser.avatarUrl,
+          password: null,
+        })
       }
-    )
+    }
 
     /**
      * Met à jour l'avatar si changé
