@@ -12,7 +12,7 @@ export class Demo {
   videoUrl = signal<SafeResourceUrl | null>(null);
 
   constructor(private sanitizer: DomSanitizer) {
-    this.setVideoUrl('https://streamable.com/e/qj32ny');
+    this.setVideoUrl('https://jumpshare.com/embed/V1L6kVNTkY3P4BKHsHzp');
   }
 
   setVideoUrl(url: string) {
