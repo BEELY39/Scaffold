@@ -25,7 +25,8 @@
                 "input": "public"
               },
               "src/robots.txt",
-              "src/sitemap.xml"
+              "src/sitemap.xml",
+              "src/googlea04c371e0b881c3a.html"
             ],
             "styles": [
               "src/styles.css"
