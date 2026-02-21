@@ -3,4 +3,7 @@ export const environment = {
     apiBaseUrl: 'http://localhost:3333/api',
     // Mode dev: bypass l'authentification pour tester le frontend sans backend
     bypassAuth: true,
+    // PostHog Analytics - remplacer par ta clé API
+    posthogKey: 'phc_lqNCAnXeCiOu9j6VSekwA6bnczPSbJHxHyPr1AED05c',
+    posthogHost: 'https://eu.i.posthog.com',
 };
