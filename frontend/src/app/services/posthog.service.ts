@@ -23,7 +23,9 @@ export class PosthogService {
         capture_pageview: true,
         capture_pageleave: true,
         autocapture: true,
+        debug: true, // Active les logs pour le débogage
       });
+      console.log('[PostHog] Initialized with key:', environment.posthogKey.substring(0, 10) + '...');
     });
 
     this.initialized = true;
