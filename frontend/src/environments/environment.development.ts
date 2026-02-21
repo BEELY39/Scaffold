@@ -5,5 +5,5 @@ export const environment = {
     bypassAuth: true,
     // PostHog Analytics - remplacer par ta clé API
     posthogKey: 'phc_lqNCAnXeCiOu9j6VSekwA6bnczPSbJHxHyPr1AED05c',
-    posthogHost: 'https://eu.i.posthog.com',
+    posthogHost: 'https://us.i.posthog.com',
 };
