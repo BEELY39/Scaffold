@@ -67,7 +67,7 @@
 
       <!-- CTA Buttons -->
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-        <a routerLink="/login" class="w-full sm:w-auto px-8 py-3.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-all shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:-translate-y-0.5">
+        <a routerLink="/login" (click)="trackCta('hero')" class="w-full sm:w-auto px-8 py-3.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-all shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:-translate-y-0.5">
           Essayer gratuitement
         </a>
         <button (click)="openDemo()" class="w-full sm:w-auto px-8 py-3.5 text-sm font-semibold text-zinc-300 bg-zinc-800/80 hover:bg-zinc-700/80 border border-zinc-700/50 rounded-lg transition-all flex items-center justify-center gap-2 hover:-translate-y-0.5">
@@ -433,7 +433,7 @@
       <p class="text-lg text-zinc-400 mb-10 max-w-xl mx-auto">
         Rejoins les étudiants et jeunes devs qui maîtrisent l'agile avant même leur premier job.
       </p>
-      <a routerLink="/login" class="inline-flex px-8 py-4 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-all shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:-translate-y-0.5">
+      <a routerLink="/login" (click)="trackCta('footer')" class="inline-flex px-8 py-4 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-all shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:-translate-y-0.5">
         Commencer gratuitement
       </a>
     </div>

@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth';
 import { ProjectService } from '../../services/project.service';
 import { TicketService } from '../../services/ticket.service';
 import { PaymentService } from '../../services/payment.service';
+import { PosthogService } from '../../services/posthog.service';
 import { Sidebar, Project as SidebarProject } from '../../components/sidebar/sidebar';
 import { CreateProjectModal } from '../../components/create-project-modal/create-project-modal';
 import { CookieConsentComponent } from '../../components/cookie-consent/cookie-consent';
@@ -39,6 +40,7 @@ export class DashboardComponent implements OnInit {
   private projectService = inject(ProjectService);
   private ticketService = inject(TicketService);
   private paymentService = inject(PaymentService);
+  private posthog = inject(PosthogService);
   private router = inject(Router);
   private http = inject(HttpClient);
 
@@ -60,6 +62,7 @@ export class DashboardComponent implements OnInit {
   sidebarProjects = signal<SidebarProject[]>([]);
 
   ngOnInit(): void {
+    this.posthog.capture('dashboard_viewed');
     this.loadProjects();
     this.loadUsage();
   }
@@ -108,6 +111,7 @@ export class DashboardComponent implements OnInit {
   }
 
   openCreateModal(): void {
+    this.posthog.capture('create_project_modal_opened');
     this.isModalOpen.set(true);
   }
 
@@ -119,6 +123,7 @@ export class DashboardComponent implements OnInit {
     this.isCreating.set(true);
     this.projectService.createWithTickets(projectData).subscribe({
       next: ({ project }) => {
+        this.posthog.capture('project_created', { projectName: project.name, projectId: project.id });
         this.projects.update(current => [...current, project]);
         this.sidebarProjects.update(current => [...current, { id: project.id, name: project.name }]);
         this.closeModal();
@@ -128,6 +133,7 @@ export class DashboardComponent implements OnInit {
         this.router.navigate(['/projects', project.id]);
       },
       error: (err: HttpErrorResponse) => {
+        this.posthog.capture('project_creation_failed', { error: err.error?.message, status: err.status });
         this.isCreating.set(false);
         if (err.status === 402) {
           const resetDate = err.error?.usage?.resetDate
@@ -142,10 +148,13 @@ export class DashboardComponent implements OnInit {
   }
 
   logout(): void {
+    this.posthog.capture('logout');
+    this.posthog.reset();
     this.authService.logout();
   }
 
   openUpgradeModal(): void {
+    this.posthog.capture('upgrade_modal_opened');
     this.showUpgradeModal.set(true);
   }
 

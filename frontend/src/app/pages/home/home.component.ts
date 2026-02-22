@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
 import { Demo } from '../../components/demo/demo';
+import { PosthogService } from '../../services/posthog.service';
 
 @Component({
   selector: 'app-home',
@@ -12,10 +13,16 @@ import { Demo } from '../../components/demo/demo';
 })
 export class HomeComponent {
   authService = inject(AuthService);
+  private posthog = inject(PosthogService);
   demoModal = viewChild<Demo>('demoModal');
 
   openDemo() {
+    this.posthog.capture('demo_video_opened');
     this.demoModal()?.openModal();
+  }
+
+  trackCta(location: string) {
+    this.posthog.capture('cta_clicked', { location });
   }
 
   faqs = [
@@ -37,6 +44,9 @@ export class HomeComponent {
   ];
 
   toggleFaq(index: number) {
+    if (!this.faqs[index].open) {
+      this.posthog.capture('faq_expanded', { question: this.faqs[index].question });
+    }
     this.faqs[index].open = !this.faqs[index].open;
   }
 }

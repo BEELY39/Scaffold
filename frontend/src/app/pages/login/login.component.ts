@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
+import { PosthogService } from '../../services/posthog.service';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +14,7 @@ import { AuthService } from '../../services/auth';
 export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private posthog = inject(PosthogService);
 
   // Toggle login/register
   isRegisterMode = signal(false);
@@ -29,7 +31,9 @@ export class LoginComponent {
   rememberMe = false;
 
   toggleMode(): void {
-    this.isRegisterMode.update((v) => !v);
+    const newMode = !this.isRegisterMode();
+    this.posthog.capture('auth_mode_toggled', { newMode: newMode ? 'register' : 'login' });
+    this.isRegisterMode.set(newMode);
     this.errorMessage.set('');
     // Reset fields
     this.fullName = '';
@@ -58,13 +62,20 @@ export class LoginComponent {
   }
 
   login(): void {
+    this.posthog.capture('login_attempted', { email: this.email });
     this.authService.emailLogin(this.email, this.password).subscribe({
       next: (res) => {
+        this.posthog.capture('login_success');
+        this.posthog.identify(res.user.id.toString(), {
+          email: res.user.email,
+          fullName: res.user.fullName
+        });
         localStorage.setItem('auth_token', res.token);
         this.authService.loadUser();
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
+        this.posthog.capture('login_failed', { error: err.error?.message });
         this.isLoading.set(false);
         this.errorMessage.set(err.error?.message || 'Erreur de connexion');
       },
@@ -84,15 +95,22 @@ export class LoginComponent {
       return;
     }
 
+    this.posthog.capture('register_attempted', { email: this.email });
     this.authService
       .register(this.fullName, this.email, this.password, this.passwordConfirmation)
       .subscribe({
         next: (res) => {
+          this.posthog.capture('register_success');
+          this.posthog.identify(res.user.id.toString(), {
+            email: res.user.email,
+            fullName: res.user.fullName
+          });
           localStorage.setItem('auth_token', res.token);
           this.authService.loadUser();
           this.router.navigate(['/dashboard']);
         },
         error: (err) => {
+          this.posthog.capture('register_failed', { error: err.error?.message });
           this.isLoading.set(false);
           this.errorMessage.set(err.error?.message || "Erreur lors de l'inscription");
         },
@@ -100,6 +118,7 @@ export class LoginComponent {
   }
 
   googleLogin(): void {
+    this.posthog.capture('google_oauth_clicked');
     this.authService.googleLogin();
   }
 }

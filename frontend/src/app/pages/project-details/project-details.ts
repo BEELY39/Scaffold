@@ -10,6 +10,7 @@ import { Ticket, CreateTicketDto } from '../../models/ticket.model';
 import { TicketService } from '../../services/ticket.service';
 import { ProjectService } from '../../services/project.service';
 import { AuthService } from '../../services/auth';
+import { PosthogService } from '../../services/posthog.service';
 
 interface Activity {
   id: number;
@@ -32,6 +33,7 @@ export class ProjectDetails implements OnInit {
   private ticketService = inject(TicketService);
   private projectService = inject(ProjectService);
   private authService = inject(AuthService);
+  private posthog = inject(PosthogService);
 
   projectId = signal<number>(0);
   projectName = signal<string>('My Project');
@@ -84,6 +86,7 @@ export class ProjectDetails implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.projectId.set(+id);
+      this.posthog.capture('project_viewed', { projectId: +id });
       this.loadProject();
       this.loadProjects();
       this.loadTickets();
@@ -122,6 +125,7 @@ export class ProjectDetails implements OnInit {
   // AI Generation - à implémenter avec ton backend
   handleAiGenerate(input: AiGeneratorInput): void {
     this.isGenerating.set(true);
+    this.posthog.capture('ai_generation_started', { projectId: this.projectId() });
     // TODO: Appelle ton service backend avec les inputs
     // this.ticketService.generateWithAi(this.projectId(), input).subscribe(...)
     console.log('AI Generation input:', input);
@@ -129,10 +133,12 @@ export class ProjectDetails implements OnInit {
     // Pour l'instant, on simule avec generateTickets
     this.ticketService.generateTickets(this.projectId()).subscribe({
       next: (newTickets) => {
+        this.posthog.capture('ai_generation_success', { projectId: this.projectId(), ticketCount: newTickets.length });
         this.tickets.update((current) => [...current, ...newTickets]);
         this.isGenerating.set(false);
       },
       error: () => {
+        this.posthog.capture('ai_generation_failed', { projectId: this.projectId() });
         this.isGenerating.set(false);
       },
     });
@@ -153,6 +159,7 @@ export class ProjectDetails implements OnInit {
   }
 
   openTicketDetails(ticket: Ticket): void {
+    this.posthog.capture('ticket_details_opened', { ticketId: ticket.id, ticketTitle: ticket.title });
     this.selectedTicket.set(ticket);
     this.isDetailModalOpen.set(true);
   }
@@ -181,6 +188,7 @@ export class ProjectDetails implements OnInit {
 
     this.ticketService.create(ticket).subscribe({
       next: (newTicket) => {
+        this.posthog.capture('ticket_created', { ticketId: newTicket.id, ticketTitle: newTicket.title });
         this.tickets.update((current) => [...current, newTicket]);
         this.closeModal();
       },
@@ -188,6 +196,7 @@ export class ProjectDetails implements OnInit {
   }
 
   updateTicketStatus(event: StatusChangeEvent): void {
+    this.posthog.capture('ticket_status_changed', { ticketId: event.ticketId, newStatus: event.newStatus });
     this.ticketService.update(event.ticketId, { status: event.newStatus }).subscribe({
       next: (updatedTicket) => {
         this.tickets.update((current) =>

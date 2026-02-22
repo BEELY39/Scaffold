@@ -2,6 +2,7 @@ import { Component, OnInit, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
+import { PosthogService } from '../../services/posthog.service';
 
 @Component({
   selector: 'app-auth-callback',
@@ -13,6 +14,7 @@ export class AuthCallbackComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
   private platformId = inject(PLATFORM_ID);
+  private posthog = inject(PosthogService);
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -21,8 +23,10 @@ export class AuthCallbackComponent implements OnInit {
       const returnUrl = this.authService.getAndClearReturnUrl() || this.route.snapshot.queryParamMap.get('returnUrl') || '/dashboard';
 
       if (token) {
+        this.posthog.capture('oauth_callback_success');
         this.authService.handleCallback(token, returnUrl);
       } else {
+        this.posthog.capture('oauth_callback_failed');
         // Pas de token, redirige vers login
         this.router.navigate(['/login']);
       }
