@@ -1,0 +1,159 @@
+<div class="min-h-screen bg-[#09090b] text-white font-['Inter'] antialiased">
+
+  <!-- Background Effects -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-0 left-1/4 w-[600px] h-[600px] bg-indigo-500/20 rounded-full blur-[128px]"></div>
+    <div class="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-violet-500/15 rounded-full blur-[128px]"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="relative z-50 px-6 py-5 max-w-7xl mx-auto">
+    <div class="flex items-center justify-between">
+      <a routerLink="/" class="flex items-center gap-3 group">
+        <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/25">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <span class="text-lg font-semibold text-white">Scaffold</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8">
+        <a routerLink="/" class="text-sm text-zinc-400 hover:text-white transition-colors">Accueil</a>
+        <a routerLink="/learn" class="text-sm text-white font-medium">Apprendre</a>
+      </div>
+
+      <a routerLink="/login" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors">
+        Commencer
+      </a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative z-10 pt-16 pb-12 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800/80 border border-zinc-700/50 text-xs text-zinc-300 mb-6">
+        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+        Guide gratuit
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-[1.1]">
+        Apprendre la
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400">méthode Agile</span>
+      </h1>
+
+      <p class="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+        S'entraîner en Agile, comprendre Scrum, rédiger des user stories et des tickets Jira.
+        Le guide complet pour les étudiants et développeurs juniors.
+      </p>
+
+      <div class="flex flex-wrap justify-center gap-3 mb-12">
+        <span class="px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-sm">Méthode Agile</span>
+        <span class="px-3 py-1 bg-violet-500/20 text-violet-300 rounded-full text-sm">Scrum</span>
+        <span class="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">User Stories</span>
+        <span class="px-3 py-1 bg-pink-500/20 text-pink-300 rounded-full text-sm">Kanban</span>
+        <span class="px-3 py-1 bg-cyan-500/20 text-cyan-300 rounded-full text-sm">Jira</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Table of Contents -->
+  <section class="relative z-10 py-8 px-6 border-y border-zinc-800/50">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-sm font-medium text-zinc-500 uppercase tracking-wider mb-4">Sommaire</h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+        @for (concept of concepts; track concept.slug) {
+          <a [href]="'#' + concept.slug" class="flex items-center gap-3 p-3 bg-zinc-900/50 hover:bg-zinc-800/50 rounded-lg border border-zinc-800 hover:border-zinc-700 transition-all">
+            <span class="text-xl">{{ concept.icon }}</span>
+            <span class="text-sm text-zinc-300">{{ concept.title }}</span>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="relative z-10 py-16 px-6">
+    <div class="max-w-4xl mx-auto">
+      @for (concept of concepts; track concept.slug) {
+        <article [id]="concept.slug" class="mb-16 scroll-mt-24">
+          <div class="flex items-center gap-4 mb-6">
+            <span class="text-4xl">{{ concept.icon }}</span>
+            <h2 class="text-2xl md:text-3xl font-bold text-white">{{ concept.title }}</h2>
+          </div>
+
+          <div class="prose prose-invert prose-zinc max-w-none">
+            <div class="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 md:p-8">
+              @for (paragraph of concept.content.split('\n\n'); track $index) {
+                @if (paragraph.includes(':') && !paragraph.startsWith('•') && !paragraph.startsWith('✓')) {
+                  <h3 class="text-lg font-semibold text-indigo-400 mt-6 mb-3 first:mt-0">{{ paragraph.split(':')[0] }}</h3>
+                  <p class="text-zinc-300 leading-relaxed whitespace-pre-line">{{ paragraph.split(':').slice(1).join(':') }}</p>
+                } @else {
+                  <p class="text-zinc-300 leading-relaxed whitespace-pre-line mb-4">{{ paragraph }}</p>
+                }
+              }
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+
+  <!-- Resources Section -->
+  <section class="relative z-10 py-16 px-6 border-t border-zinc-800/50">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-2xl font-bold text-white mb-8">Ressources complémentaires</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+        @for (resource of resources; track resource.url) {
+          <a [href]="resource.url" target="_blank" rel="noopener" class="group p-4 bg-zinc-900/50 hover:bg-zinc-800/50 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-all">
+            <span class="text-xs text-indigo-400 uppercase tracking-wider">{{ resource.type }}</span>
+            <h3 class="text-white font-medium mt-1 group-hover:text-indigo-400 transition-colors">{{ resource.title }}</h3>
+            <span class="text-xs text-zinc-500 mt-2 flex items-center gap-1">
+              Lien externe
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            </span>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="relative z-10 py-24 px-6 border-t border-zinc-800/50">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-6">
+        Prêt à pratiquer ?
+      </h2>
+      <p class="text-lg text-zinc-400 mb-10 max-w-xl mx-auto">
+        La théorie c'est bien, mais rien ne vaut la pratique. Crée ton premier projet et génère des tickets pro avec l'IA.
+      </p>
+      <a routerLink="/login" class="inline-flex px-8 py-4 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-all shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:-translate-y-0.5">
+        S'entraîner gratuitement
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="relative z-10 py-12 px-6 border-t border-zinc-800/50">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-lg flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <span class="font-semibold text-white">Scaffold</span>
+        </div>
+        <div class="flex items-center gap-6">
+          <a routerLink="/" class="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">Accueil</a>
+          <a routerLink="/learn" class="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">Apprendre</a>
+          <a routerLink="/legal" class="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">Mentions légales</a>
+          <span class="text-sm text-zinc-600">© 2026 DN Service</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>

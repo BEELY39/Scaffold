@@ -41,6 +41,12 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/legal/legal').then((m) => m.Legal),
   },
+  // Apprendre l'Agile (SEO)
+  {
+    path: 'apprendre',
+    loadComponent: () =>
+      import('./pages/learn/learn.component').then((m) => m.LearnComponent),
+  },
   // Settings (protégé)
   {
     path: 'settings',
